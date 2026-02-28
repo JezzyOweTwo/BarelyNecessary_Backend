@@ -1,7 +1,6 @@
 import { prop,getModelForClass } from '@typegoose/typegoose';
-import { Queryable} from '@/lib/Queryable'
 
-class Item implements Queryable{
+class Item {
     @prop({required:true})
      public name?: string
 
