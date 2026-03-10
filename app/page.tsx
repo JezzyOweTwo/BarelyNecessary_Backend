@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <>
-      <h1>Go fuck yourself.</h1>
+      <h1>Go fuck yourself... no u</h1>
     </>
   );
 }
