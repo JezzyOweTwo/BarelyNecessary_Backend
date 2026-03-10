@@ -1,5 +1,5 @@
-import { ReturnModelType } from "@typegoose/typegoose";
-
+//import { ReturnModelType } from "@typegoose/typegoose";
+import mysql from "mysql2";
 // TODO: add a 'query' class to make searching by parameters easier
 // TODO: add another method for searching by a query
 // this shit is completely untested, lmfao. I'm going based on pure vibes atm.
