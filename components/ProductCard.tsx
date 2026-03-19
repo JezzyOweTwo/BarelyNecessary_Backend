@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Product } from "@/lib/types";
+import AddToCartButton from "./AddToCartButton";
 
 type ProductCardProps = {
   product: Product;
@@ -74,12 +75,12 @@ export default function ProductCard({ product }: ProductCardProps) {
               View Details
             </Link>
 
-            <button
-              disabled={isOutOfStock}
-              className="flex-1 rounded-xl bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
-            >
-              Add to Cart
-            </button>
+            <AddToCartButton
+              product={{product_id: product.product_id,
+              name: product.name,
+              price: product.price,
+              image_url: product.image_url,}}/>
+  
           </div>
         </div>
       </div>
