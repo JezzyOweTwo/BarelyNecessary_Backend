@@ -1,15 +1,40 @@
 import { NextResponse } from "next/server";
-import { getAll } from "@/lib/database_handler";
-import { Item } from "@/models/Item";
+import pool from "@/lib/db";
 
 export async function GET() {
   try {
-    const products = await getAll<Item>("products");
-    return NextResponse.json(products);
+    const [rows] = await pool.query(`
+      SELECT
+        product_id,
+        category_id,
+        name,
+        brand,
+        model,
+        short_tagline,
+        description,
+        price,
+        stock_quantity,
+        image_url,
+        is_featured,
+        is_active
+      FROM products
+      WHERE is_active = 1
+      ORDER BY product_id ASC
+    `);
+
+    return NextResponse.json({
+      success: true,
+      products: rows,
+    });
   } catch (error) {
-    console.error("Products fetch failed:", error);
+    console.error("Error getting products:", error);
+
     return NextResponse.json(
-      { message: "Failed to fetch products." },
+      {
+        success: false,
+        message: "Failed to get products",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

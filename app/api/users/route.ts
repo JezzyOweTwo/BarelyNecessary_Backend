@@ -6,9 +6,9 @@ export async function GET() {
     const users = await getAll("users");
     return NextResponse.json(users);
   } catch (error) {
-    console.error("Users fetch failed:", error);
+    console.error("Users get failed:", error);
     return NextResponse.json(
-      { message: "Failed to fetch users." },
+      { message: "Failed to get users." },
       { status: 500 }
     );
   }

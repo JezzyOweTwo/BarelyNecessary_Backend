@@ -99,8 +99,7 @@ export default function CatalogClient({
             Browse Products
           </h1>
           <p className="mt-4 max-w-2xl text-gray-600">
-            Search, filter, and sort products from the actual backend.
-          </p>
+            Browse products and use filters to search by category, brand, or price.          </p>
         </div>
       </section>
 

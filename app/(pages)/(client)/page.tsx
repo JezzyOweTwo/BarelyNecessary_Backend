@@ -16,12 +16,11 @@ export default function HomePage() {
               </p>
 
               <h1 className="max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-                A clean mock e-commerce storefront built for EECS 4413
+                Barely Necessary Store
               </h1>
 
               <p className="mt-6 max-w-xl text-lg text-gray-600">
-                Browse products, explore categories, view details, manage a cart,
-                and move through a full online store flow with a polished frontend.
+                Browse products, explore categories, view details, manage a cart, and move through a full online store flow with frontend.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -44,7 +43,7 @@ export default function HomePage() {
             <div className="rounded-3xl border border-gray-200 bg-gradient-to-br from-gray-100 to-white p-8 shadow-sm">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl bg-white p-5 shadow-sm">
-                  <p className="text-sm text-gray-500">Core Features</p>
+                  <p className="text-sm text-gray-500">Main Features</p>
                   <h3 className="mt-2 text-lg font-semibold">Catalog + Cart</h3>
                   <p className="mt-2 text-sm text-gray-600">
                     Browse, filter, sort, and add products into a cart flow.
@@ -55,7 +54,7 @@ export default function HomePage() {
                   <p className="text-sm text-gray-500">Customer Flow</p>
                   <h3 className="mt-2 text-lg font-semibold">Checkout Ready</h3>
                   <p className="mt-2 text-sm text-gray-600">
-                    Supports account, profile, shipping, payment, and order history views.
+                    Supports account, profile, shipping, payment and order history views.
                   </p>
                 </div>
 
@@ -71,7 +70,7 @@ export default function HomePage() {
                   <p className="text-sm text-gray-500">Tech Stack</p>
                   <h3 className="mt-2 text-lg font-semibold">Next + TypeScript</h3>
                   <p className="mt-2 text-sm text-gray-600">
-                    Built with reusable components and mock data for easy backend hookup later.
+                    Uses reusable components and mock data for now, backend can be added later
                   </p>
                 </div>
               </div>
@@ -124,7 +123,7 @@ export default function HomePage() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
             Featured
           </p>
-          <h2 className="mt-2 text-3xl font-bold">Highlighted products</h2>
+          <h2 className="mt-2 text-3xl font-bold">Featured products</h2>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

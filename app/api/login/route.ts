@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
 
     const user = users[0] as User;
 
-    // compare hashed password
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {

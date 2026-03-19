@@ -1,6 +1,7 @@
-import CatalogueClient from "../catalog/CatalogClient";
+import CatalogClient from "./CatalogClient";
+import pool from "@/lib/db";
 
-type Product = {
+export type Product = {
   product_id: number;
   category_id: number;
   name: string;
@@ -15,43 +16,53 @@ type Product = {
   is_active: number | boolean;
 };
 
-type Category = {
+export type Category = {
   category_id: number;
   category_name: string;
   description: string | null;
 };
 
-async function getProducts(): Promise<Product[]> {
-  const res = await fetch("http://localhost:3000/api/products", {
-    cache: "no-store",
-  });
+async function getAllProducts(): Promise<Product[]> {
+  const [rows] = await pool.query(`
+    SELECT
+      product_id,
+      category_id,
+      name,
+      brand,
+      model,
+      short_tagline,
+      description,
+      price,
+      stock_quantity,
+      image_url,
+      is_featured,
+      is_active
+    FROM products
+    WHERE is_active = 1
+    ORDER BY product_id ASC
+  `);
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
-  }
-
-  const data = await res.json();
-  return data.products ?? [];
+  return rows as Product[];
 }
 
-async function getCategories(): Promise<Category[]> {
-  const res = await fetch("http://localhost:3000/api/categories", {
-    cache: "no-store",
-  });
+async function getAllCategories(): Promise<Category[]> {
+  const [rows] = await pool.query(`
+    SELECT
+      category_id,
+      category_name,
+      description
+    FROM categories
+    ORDER BY category_id ASC
+  `);
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch categories");
-  }
-
-  const data = await res.json();
-  return data.categories ?? [];
+  return rows as Category[];
 }
 
 export default async function CatalogPage() {
   const [products, categories] = await Promise.all([
-    getProducts(),
-    getCategories(),
+    getAllProducts(),
+    getAllCategories(),
   ]);
 
-  return <CatalogueClient products={products} categories={categories} />;
+  return <CatalogClient products={products} categories={categories} />;
 }

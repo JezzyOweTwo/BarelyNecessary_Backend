@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ users, products });
   } catch (error) {
     return NextResponse.json(
-      { message: "Failed to fetch data.", error: String(error) },
+      { message: "Failed to get product data", error: String(error) },
       { status: 500 }
     );
   }
