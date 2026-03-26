@@ -1,28 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import pool from "@/lib/db";
 import AddToCartButton from "@/components/AddToCartButton";
-
-type Product = {
-  product_id: number;
-  category_id: number;
-  name: string;
-  brand: string | null;
-  model: string | null;
-  short_tagline: string | null;
-  description: string;
-  price: number;
-  stock_quantity: number;
-  image_url: string | null;
-  is_featured: number | boolean;
-  is_active: number | boolean;
-};
-
-type Category = {
-  category_id: number;
-  category_name: string;
-  description: string | null;
-};
+import { Product,Category } from "@/lib/types";
 
 type PageProps = {
   params: Promise<{
@@ -30,67 +9,22 @@ type PageProps = {
   }>;
 };
 
-async function getProductById(id: number): Promise<Product | null> {
-  const [rows] = await pool.query(
-    `
-    SELECT
-      product_id,
-      category_id,
-      name,
-      brand,
-      model,
-      short_tagline,
-      description,
-      price,
-      stock_quantity,
-      image_url,
-      is_featured,
-      is_active
-    FROM products
-    WHERE product_id = ? AND is_active = 1
-    LIMIT 1
-    `,
-    [id]
-  );
-
-  const products = rows as Product[];
-  return products[0] ?? null;
-}
-
-async function getAllCategories(): Promise<Category[]> {
-  const [rows] = await pool.query(`
-    SELECT
-      category_id,
-      category_name,
-      description
-    FROM categories
-    ORDER BY category_id ASC
-  `);
-
-  return rows as Category[];
-}
-
 export default async function ProductDetailsPage({ params }: PageProps) {
   const { id } = await params;
   const productId = Number(id);
 
-  if (Number.isNaN(productId)) {
-    notFound();
-  }
+  if (Number.isNaN(productId)) {notFound();}
 
-  const [product, categories] = await Promise.all([
-    getProductById(productId),
-    getAllCategories(),
-  ]);
+  var response:Response;
 
-  if (!product) {
-    notFound();
-  }
+  response = await fetch(`http://${process.env.APP_HOST}:${process.env.APP_PORT}/api/product/${id}`);
+  const product = ((await response.json()).product) as Product;
 
-  const category = categories.find(
-    (item) => item.category_id === product.category_id
-  );
+  if (!product) {notFound();}
 
+  const categoryID = product.category_id;
+  response = await fetch(`http://${process.env.APP_HOST}:${process.env.APP_PORT}/api/category/${categoryID}`);
+  const category = ((await response.json()).product) as Category;
   const isFeatured = Boolean(product.is_featured);
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
   const isOutOfStock = product.stock_quantity <= 0;

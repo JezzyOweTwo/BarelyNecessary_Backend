@@ -1,0 +1,25 @@
+# Dockerfile.prod
+# syntax=docker/dockerfile:1.4
+FROM node:20-alpine
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json ./
+RUN npm install --production
+
+# Copy source code
+COPY . .
+
+# gotta do this weird shit to avoid keeping
+# sensitive info in the image.
+
+RUN --mount=type=secret,id=DB_PASSWORD,env=DB_PASSWORD \
+    --mount=type=secret,id=DB_USER,env=DB_USER \
+    --mount=type=secret,id=DB_NAME,env=DB_NAME \
+    npm run build
+
+# Expose production port
+EXPOSE ${APP_PORT}
+
+# Start App
+CMD ["npm", "start"]

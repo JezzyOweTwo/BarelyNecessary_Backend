@@ -1,5 +1,5 @@
-CREATE DATABASE `4413_Project_Website`;
-USE `4413_Project_Website`;
+CREATE DATABASE IF NOT EXISTS 4413_Project_Website;
+USE 4413_Project_Website;
 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY, 
@@ -14,7 +14,6 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
 
 CREATE TABLE addresses (
 	address_id int auto_increment primary key, 

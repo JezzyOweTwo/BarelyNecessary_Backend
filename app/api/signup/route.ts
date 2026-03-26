@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { query, exists } from "@/lib/database_handler";
+import { query_db, exists } from "@/lib/database_handler";
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     // HASH PASSWORD
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await query(
+    await query_db(
       `INSERT INTO users
       (first_name, last_name, email, username, password, phone, role, is_active)
       VALUES (?, ?, ?, ?, ?, ?, 'customer', TRUE)`,

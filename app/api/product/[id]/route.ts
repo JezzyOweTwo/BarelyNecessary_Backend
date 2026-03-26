@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import pool from "@/lib/db";
+import {query_db} from "@/lib/database_handler";
+import { RouteContext } from "@/lib/types";
+import { Product } from "@/lib/types";
 
-type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
-};
-
-export async function GET(_request: Request, context: RouteContext) {
+export async function GET(_request: Request, context: RouteContext<{id:string}>) {
   try {
     const { id } = await context.params;
     const productId = Number(id);
@@ -19,7 +15,7 @@ export async function GET(_request: Request, context: RouteContext) {
       );
     }
 
-    const [rows] = await pool.query(
+    const product = await query_db(
       `
       SELECT
         product_id,
@@ -39,24 +35,9 @@ export async function GET(_request: Request, context: RouteContext) {
       LIMIT 1
       `,
       [productId]
-    );
+    ) as Product[];
 
-    const productRows = rows as Array<{
-      product_id: number;
-      category_id: number;
-      name: string;
-      brand: string | null;
-      model: string | null;
-      short_tagline: string | null;
-      description: string;
-      price: number;
-      stock_quantity: number;
-      image_url: string | null;
-      is_featured: number | boolean;
-      is_active: number | boolean;
-    }>;
-
-    if (productRows.length === 0) {
+    if (product.length === 0) {
       return NextResponse.json(
         { success: false, message: "Product not found" },
         { status: 404 }
@@ -65,10 +46,10 @@ export async function GET(_request: Request, context: RouteContext) {
 
     return NextResponse.json({
       success: true,
-      product: productRows[0],
+      product: product[0],
     });
   } catch (error) {
-    console.error("Error getting product by ID:", error);
+    console.error("Error getting product:", error);
 
     return NextResponse.json(
       {

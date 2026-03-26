@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import pool from "@/lib/db";
+import {query_db} from "@/lib/database_handler";
+import { Product } from "@/lib/types";
 
 export async function GET() {
   try {
-    const [rows] = await pool.query(`
+    const products = await query_db(`
       SELECT
         product_id,
         category_id,
@@ -20,11 +21,11 @@ export async function GET() {
       FROM products
       WHERE is_active = 1
       ORDER BY product_id ASC
-    `);
+    `) as Product[];
 
     return NextResponse.json({
       success: true,
-      products: rows,
+      products: products,
     });
   } catch (error) {
     console.error("Error getting products:", error);

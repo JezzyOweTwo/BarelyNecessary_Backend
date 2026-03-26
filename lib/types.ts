@@ -12,6 +12,10 @@ export interface Address {
   is_default: boolean;
 }
 
+export type RouteContext<T extends Record<string, string> = {}> = {
+  params: Promise<T>;
+};
+
 export interface PaymentMethod {
   payment_id: number;
   user_id: number;
@@ -26,7 +30,7 @@ export interface PaymentMethod {
 export interface Category {
   category_id: number;
   category_name: string;
-  description?: string;
+  description?: string | null | undefined;
 }
 
 export interface Product {

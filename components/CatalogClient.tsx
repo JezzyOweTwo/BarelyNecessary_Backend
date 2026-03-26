@@ -2,27 +2,7 @@
 
 import { useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
-
-type Product = {
-  product_id: number;
-  category_id: number;
-  name: string;
-  brand: string | null;
-  model: string | null;
-  short_tagline: string | null;
-  description: string;
-  price: number;
-  stock_quantity: number;
-  image_url: string | null;
-  is_featured: number | boolean;
-  is_active: number | boolean;
-};
-
-type Category = {
-  category_id: number;
-  category_name: string;
-  description: string | null;
-};
+import {Product, Category} from "@/lib/types"
 
 type SortOption =
   | "default"
@@ -47,7 +27,7 @@ export default function CatalogClient({
 
   const brands = useMemo(() => {
     return Array.from(
-      new Set(products.map((product) => product.brand).filter(Boolean))
+      new Set(  products.map((product) => product.brand).filter(Boolean))
     ) as string[];
   }, [products]);
 

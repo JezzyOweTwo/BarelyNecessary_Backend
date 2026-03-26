@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import pool from "@/lib/db";
+import {query_db} from "@/lib/database_handler";
 
 export async function GET() {
   try {
-    const [rows] = await pool.query("SELECT 1 AS test");
+    const [rows] = await query_db("SELECT 1 AS test");
     return NextResponse.json({
       success: true,
       message: "Database connected successfully",

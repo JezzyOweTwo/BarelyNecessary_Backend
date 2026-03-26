@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { query } from "@/lib/database_handler";
+import { query_db } from "@/lib/database_handler";
 import { User } from "@/models/User";
 
 export async function POST(req: NextRequest) {
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
     const { email, password } = body;
 
-    const users = await query(
+    const users = await query_db(
       `SELECT * FROM users WHERE email = ? LIMIT 1`,
       [email]
     );
