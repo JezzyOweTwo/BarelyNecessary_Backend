@@ -58,7 +58,7 @@
             
             <b>2b. Production Setup: </b> When we're all done and we need to finally deploy to AWS: <br>
             <ul>
-                <li><code>docker compose --env-file .env.production up --build</code> <br></li>
+                <li><code>docker compose --env-file .env.production -f docker-compose.yml -f docker-compose-dev.yml up</code> <br></li>
                 <li><code>npm run start</code></li>
             </ul>
         </ol>
