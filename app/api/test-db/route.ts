@@ -6,7 +6,7 @@ export async function GET() {
     const [rows] = await query_db("SELECT 1 AS test");
     return NextResponse.json({
       success: true,
-      message: "Database connected successfully",
+      data: "Database connected successfully",
       rows,
     });
   } catch (error) {

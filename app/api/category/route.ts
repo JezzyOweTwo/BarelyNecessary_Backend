@@ -25,7 +25,7 @@ export async function GET(_request: Request) {
 
     return NextResponse.json({
       success: true,
-      categories: categories,
+      data: categories,
     });
   } catch (error) {
     console.error("Error parsing product category array:", error);

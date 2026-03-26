@@ -37,7 +37,7 @@ export async function GET(_request: Request, context: RouteContext<{id:string}>)
 
     return NextResponse.json({
       success: true,
-      product: category[0],
+      data: category[0],
     });
   } catch (error) {
     console.error("Error parsing product category array:", error);
