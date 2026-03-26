@@ -1,5 +1,5 @@
 > **THIS PROJECT WILL NOT WORK WITHOUT THE `.ENV` FILES!**
-> Please see the setup guide below.
+> Don't be an idiot confused why it's not working without the .env files. 💀
 
 ---
 
@@ -21,8 +21,8 @@ It makes managing each container way easier. You don't need it, buuuuuuut do it.
 If you have previously cloned the repository and just want to update to the latest version:
 
 * Open the project folder in VS Code using `Control + K + O`
-* Go to the **Source Control** section on the left-hand pane (the icon with three circles and lines)
-* In the **GRAPH** section, press the button labelled **Fetch**, then the one labelled **Pull**
+* Go find the Source Control button on the left-hand pane. (icon w/ the three circles and lines)
+* In the GRAPH section, press the button labelled Fetch, then the one labelled Pull
 
 ---
 
@@ -37,13 +37,13 @@ If you have not previously cloned the repo, do this instead:
 git clone https://github.com/JezzyOweTwo/BarelyNecessary_Backend.git
 ```
 
-* Use `Control + K + O` again to move yourself into the project folder
+* Use `Control + K + O` again to move urself into the project folder
 
 ---
 
 ### 2. Running the Project Locally
 
-We're using Docker now, which makes it dead simple to start.
+We're using Docker now, which makes it hella free to do stuff.
 
 #### 1. Environment Files
 
