@@ -1,9 +1,7 @@
 > **THIS PROJECT WILL NOT WORK WITHOUT THE `.ENV` FILES!**
-> Don't be an idiot confused why it's not working without the .env files. 💀
+> Don't be an idiot confused why it's not working without them. 💀
 
 ---
-
-## Setup Guide
 
 Sup. Welcome to the project! Here's a quick tutorial to get you started:
 
