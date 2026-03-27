@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/AddToCartButton";
 import { Product,Category } from "@/lib/types";
+import { api_get } from "@/lib/http_methods";
 
 type PageProps = {
   params: Promise<{
@@ -15,16 +16,13 @@ export default async function ProductDetailsPage({ params }: PageProps) {
 
   if (Number.isNaN(productId)) {notFound();}
 
-  var response:Response;
-
-  response = await fetch(`http://${process.env.APP_HOST}:${process.env.APP_PORT}/api/product/${id}`);
-  const product = ((await response.json()).product) as Product;
+  const product:Product = await api_get<Product>("/api/product/id");
+  // const categories:Category[] = await api_get<Category[]>("/api/category");
 
   if (!product) {notFound();}
 
   const categoryID = product.category_id;
-  response = await fetch(`http://${process.env.APP_HOST}:${process.env.APP_PORT}/api/category/${categoryID}`);
-  const category = ((await response.json()).product) as Category;
+  const category:Category = await api_get<Category>(`/api/Category/${categoryID}`);
   const isFeatured = Boolean(product.is_featured);
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
   const isOutOfStock = product.stock_quantity <= 0;
