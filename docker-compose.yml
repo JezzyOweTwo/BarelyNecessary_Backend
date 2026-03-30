@@ -1,27 +1,14 @@
 services:
-
-  # this version is less secure, and intended to be ran locally.
-  # it supports live server reloading, but is slower because of it.
-  
   db:
-    image: mysql:8
     container_name: mysql_db
+    image: mysql:8
     restart: always
-    ports:
-      - "${DB_PORT}:3306"
     volumes:
       - ./db:/docker-entrypoint-initdb.d
 
   redis:
-    image: redis:7
     container_name: redis_cache
-    ports:
-      - "${REDIS_PORT}:6379"
+    image: redis:7
 
-secrets:
-  DB_USER:
-    file: ./secrets/db_username.txt
-  DB_PASSWORD:
-    file: ./secrets/db_password.txt
-  DB_NAME:
-    file: ./secrets/db_name.txt
+  images:
+    container_name: images

@@ -35,9 +35,15 @@ services:
       - "${REDIS_PORT}:6379"
 
 secrets:
-  DB_USER:
-    file: ./secrets/db_username.txt
   DB_PASSWORD:
     file: ./secrets/db_password.txt
   DB_NAME:
     file: ./secrets/db_name.txt
+  IMAGES_PASSWORD:
+    file: ./secrets/images_password.txt
+  IMAGES_USER:
+    file: ./secrets/images_username.txt
+  REDIS_USER:
+    file: ./secrets/redis_username.txt
+  REDIS_PASSWORD:
+    file: ./secrets/redis_password.txt

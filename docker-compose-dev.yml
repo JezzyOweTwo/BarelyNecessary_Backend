@@ -1,13 +1,26 @@
 services:
 
   db:
+    ports:
+      - "${DB_PORT}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      DB_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
   
   redis:
-    image: redis:7
-    container_name: redis_cache
     ports:
       - "${REDIS_PORT}:6379"
+
+  images:
+    image: minio/minio
+    ports:
+      - "${IMAGES_PORT}:9000"
+      - "${IMAGES_EDITOR_PORT}:9001" 
+    environment:
+      MINIO_ROOT_USER: ${IMAGES_USER}
+      MINIO_ROOT_PASSWORD: ${IMAGES_PASSWORD}
+
+    command: server /data --console-address ":9001"
+
+    
