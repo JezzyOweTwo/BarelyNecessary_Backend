@@ -46,7 +46,7 @@ export async function GET(_request: Request, context: RouteContext<{id:string}>)
 
     return NextResponse.json({
       success: true,
-      data: product[0],
+      product: product[0],
     });
   } catch (error) {
     console.error("Error getting product:", error);

@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       [first_name, last_name, email, username, hashedPassword, phone]
     );
 
-    return NextResponse.json({ data: "User created successfully." });
+    return NextResponse.json({ message: "User created successfully." });
   } catch (error) {
     console.error("Signup failed:", error);
 
