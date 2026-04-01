@@ -57,7 +57,7 @@ Go to Discord, find the envs, and add them to the root of the project:
 If you're tryna change stuff in the project:
 
 ```bash
-docker compose --env-file .env.development -f docker-compose.yml -f docker-compose-dev.yml up
+npm install
 ```
 
 ```bash
