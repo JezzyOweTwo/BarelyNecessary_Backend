@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS 4413_Project_Website;
 USE 4413_Project_Website;
 
 CREATE TABLE users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY, 
+    user_id VARCHAR(36) PRIMARY KEY, 
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
