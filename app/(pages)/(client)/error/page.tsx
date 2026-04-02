@@ -1,9 +1,13 @@
-import { useRouter } from "next/router";
+"use client";
+
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function ErrorPage() {
-  const router = useRouter();
-  const { code, message } = router.query; // retrieve error info from URL
+  const searchParams = useSearchParams();
+
+  const code = searchParams.get("code");
+  const message = searchParams.get("message");
 
   return (
     <div
@@ -28,6 +32,7 @@ export default function ErrorPage() {
       <p style={{ marginTop: "1rem", color: "#666" }}>
         Please try again or return to the home page.
       </p>
+
       <Link
         href="/"
         style={{

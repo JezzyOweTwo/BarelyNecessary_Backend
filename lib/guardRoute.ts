@@ -20,6 +20,7 @@ export async function guardRoute(req: Request, validator: (req: Request) => Prom
   // strange error prevention
   catch (err: any) {
     const message = encodeURIComponent(err?.message || "Unknown Error!");
-    return NextResponse.redirect(`/error?code=500&message=${message}`);
+    const url:URL = new URL(`/error?code=500&message=${message}`, req.url);
+    return NextResponse.redirect(url);
   }
 }
