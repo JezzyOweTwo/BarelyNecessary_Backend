@@ -13,9 +13,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  //most API routes require being logged in, (except for these two, obviously)
+  //most API routes require being logged in, (except for these three, obviously)
   else if (req.nextUrl.pathname.startsWith("/api/signup")){}
   else if (req.nextUrl.pathname.startsWith("/api/login")){}
+  else if (req.nextUrl.pathname.startsWith("/api/test")){}
 
   // if validation fails, a redirect object will be returned.
   // if sucessful, null is returned, and we go to the next page.

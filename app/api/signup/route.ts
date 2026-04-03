@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { query_db, exists } from "@/lib/database_handler";
+import { exists } from "@/lib/database_handler";
+import {redisSetJSON, testRedis} from "@/lib/redis_handler"
 import { v4 as uuidv4 } from "uuid";
 import {requireAdminAuth} from "@/lib/validators";
 import {guardRoute} from "@/lib/guard_route"
-import {sendValidationEmail} from "@/lib/email-sender"
+import otpGenerator from "otp-generator";
 import { PendingUser } from "@/lib/types";
+import { sendEmail } from "@/lib/email-sender";
+
+const VERIFICATION_CODE_LENGTH = 5;
+const CODE_EXPIRATION_TIME=1800; //in seconds, aka 30 minutes
+const VERIFICATION_CODE_CONFIG = {
+  upperCaseAlphabets:false,
+  lowerCaseAlphabets:false,
+  specialChars:false
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,7 +26,9 @@ export async function POST(req: NextRequest) {
     if (!first_name) missingFields.push("first_name");
     if (!last_name) missingFields.push("last_name");
     if (!email) missingFields.push("email");
+    if (!username) missingFields.push("username");
     if (!password) missingFields.push("password");
+    if (!phone) missingFields.push("phone number");
 
     if (missingFields.length > 0) {
       return NextResponse.json(
@@ -58,7 +70,7 @@ export async function POST(req: NextRequest) {
     }
 
     // sends validation email, and saves user in redis
-    sendValidationEmail(user);
+    await sendValidationEmail(user);
 
     return NextResponse.json(
         { message: "Good job bud. Go check your email to validate your account." },
@@ -73,5 +85,25 @@ export async function POST(req: NextRequest) {
       { message: "Unknown error: Signup failed." },
       { status: 500 }
     );
+  }
+}
+
+async function sendValidationEmail(user:PendingUser){
+  const code = otpGenerator.generate(VERIFICATION_CODE_LENGTH,VERIFICATION_CODE_CONFIG );
+  user.verification_code = code;
+  
+  try{
+    await redisSetJSON(`verify:${user.email}`, user, CODE_EXPIRATION_TIME);
+    await testRedis();
+    await sendEmail(
+      user.email,
+      "Barely Neccesary Account Signup",
+      `Hello and welcome to our app! Please verify your account with the following code: ${code}`
+    )
+  } 
+  
+  catch (err){
+    console.error(err);
+    throw err;
   }
 }

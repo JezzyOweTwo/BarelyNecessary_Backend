@@ -11,29 +11,6 @@ services:
       - DB_PASSWORD
       - DB_NAME
 
-  db:
-    image: mysql:8
-    container_name: mysql_db
-    restart: always
-    secrets:
-      - DB_PASSWORD
-      - DB_NAME
-      - DB_USER
-    environment:
-      MYSQL_ROOT_PASSWORD: /secrets/DB_PASSWORD
-      DB_USER: /secrets/DB_USER
-      MYSQL_DATABASE: /secrets/DB_NAME
-    ports:
-      - "${DB_PORT}:3306"
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d
-
-  redis:
-    image: redis:7
-    container_name: redis_cache
-    ports:
-      - "${REDIS_PORT}:6379"
-
 secrets:
   DB_USER:
     file: ./secrets/db_username.txt

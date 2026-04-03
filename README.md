@@ -54,24 +54,38 @@ Go to Discord, find the envs, and add them to the root of the project:
 
 #### 2a. Developer Setup
 
-If you're tryna change stuff in the project:
+run the following two commands.
 
+Install the app's npm dependencies:
 ```bash
 npm install
 ```
 
+Create containers for redis, minio, and mySql
+```bash
+docker compose --env-file .env.development -f docker-compose-dev.yml up
+```
+
+Actually runs the project
 ```bash
 npm run dev
+```
+
+If you ever make any changes to the other containers they do NOT auto refresh. 
+User the following command to destroy the old containers, and then run the 
+other command to reconstruct the container.
+```bash
+docker compose --env-file .env.development -f docker-compose-dev.yml down -v
 ```
 
 ---
 
 #### 2b. Production Setup
 
-When we're all done and we need to finally deploy to AWS:
+In prod, most of the containers are external AWS services, so we only need to build 'app':
 
 ```bash
-docker compose --env-file .env.production -f docker-compose.yml -f docker-compose-dev.yml up
+docker compose --env-file .env.production -f docker-compose-prod.yml up
 ```
 
 ```bash
