@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { query_db, exists } from "@/lib/database_handler";
 import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken"
-import {requireAdminAuth} from "@/lib/auth";
+import {requireAdminAuth} from "@/lib/validators";
+import {guardRoute} from "@/lib/guard_route"
+import {sendValidationEmail} from "@/lib/email-sender"
+import { PendingUser } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,22 +28,9 @@ export async function POST(req: NextRequest) {
     let role: "admin" | "customer" = "customer"; 
     const userID = uuidv4();  // 36 digit UUID in the format: xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx
 
-    // you're tryna create an admin account. Only admins can create new admins.
-    try {
-      const response = await requireAdminAuth(req);   // will return a status based on if it works or nah
-      if (!response.ok) 
-        throw new Error(JSON.stringify((response.body as any).data));
-
-      role="admin";
-    } 
-
-    // admin token validation unsucessful
-    catch (err:any){
-      return NextResponse.json(
-        { message: err?.message},
-        { status: 403 }
-      );
-    }
+    // checks if the caller is an administrator or not.
+    const validate = await guardRoute(req,true,requireAdminAuth);
+    if (!validate) role="admin"; // guardRoute only returns a value if it FAILS, not succeeds.
 
     // checks if the email is already in the DB
     const emailExists:boolean = await exists("users", "email", email);
@@ -56,29 +45,27 @@ export async function POST(req: NextRequest) {
     // Hash da password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // create auth token
-    const authToken = jwt.sign(
-      { userId: userID, role }, // payload
-      process.env.JWT_SECRET!,
-      { expiresIn: "1h" }
-    );
+    const user:PendingUser ={
+        user_id: userID,
+        first_name: first_name,
+        last_name: last_name,
+        email: email,
+        username: username,
+        password: hashedPassword,
+        phone: phone,
+        role: role,
+        is_active: false
+    }
 
-    // shove that shit in the database 
-    await query_db(
-      `INSERT INTO users
-      (user_id,first_name, last_name, email, username, password, phone, role, is_active)
-      VALUES (?,?, ?, ?, ?, ?, ?, ?, TRUE)`,
-      [userID,first_name, last_name, email, username, hashedPassword, phone, role]
-    );
+    // sends validation email, and saves user in redis
+    sendValidationEmail(user);
 
-    return NextResponse.json({ 
-      data: {
-        message: "User created successfully.",
-        authorization:` Bearer ${authToken}`
-      }
-    });
-  } 
-  
+    return NextResponse.json(
+        { message: "Good job bud. Go check your email to validate your account." },
+        { status: 201 }
+    );
+  }
+
   catch (error) {
     console.error("Unknown error: Signup failed:", error);
 

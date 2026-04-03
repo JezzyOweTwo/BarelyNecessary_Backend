@@ -77,7 +77,7 @@ export async function getFirst<T = unknown>(table: string): Promise<T | null> {
 export async function getById<T = unknown>(
   table: string,
   idColumn: string,
-  id: number
+  id: number | string // user IDS are strings, but category IDs are numbers, for example.
 ): Promise<T | null> {
   const poolInstance = await getPool();
   const [rows] = await poolInstance.execute(
