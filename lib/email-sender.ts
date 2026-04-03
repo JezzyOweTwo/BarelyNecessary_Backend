@@ -36,6 +36,7 @@ export async function sendTestEmail(){
 export async function sendValidationEmail(user:PendingUser){
   const verificationCode = generateVerificationCode();
   user.verification_code = verificationCode;
+
   await redisSetJSON(`verify:${user.email}`, user, CODE_EXPIRATION_TIME);
 
   transporter.sendMail({
@@ -44,7 +45,6 @@ export async function sendValidationEmail(user:PendingUser){
     subject: `Barely Neccesary Account Signup`,
     text: `Hello and welcome to our app! Please verify your account with the following code: ${verificationCode}`
   });
-  emailCount++;
 }
 
 export async function sendEmail(recipientEmail:any,subject:any,text:any){

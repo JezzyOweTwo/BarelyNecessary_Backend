@@ -16,8 +16,9 @@ export async function POST(req: NextRequest) {
     }
 
     // retrieve pending user from redis
-    const pendingUser = await redisGetJSON<PendingUser>(`verify:${email}`);
+    const pendingUser = await redisGetJSON<PendingUser|any>(`verify:${email}`);
 
+    // bro may need to reconsider his life desisions
     if (!pendingUser) {
       return NextResponse.json(
         { data: "Verification expired or invalid." },
@@ -25,27 +26,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // verify code
-    if (pendingUser.verification_code !== code) {
+    // normalize both values
+    const storedCode = String(pendingUser.verification_code).trim().toLowerCase();
+    const inputCode = String(code).trim().toLowerCase();
+
+    // remove all invisible/whitespace characters just in case
+    const cleanStoredCode = storedCode.replace(/\s+/g, '');
+    const cleanInputCode = inputCode.replace(/\s+/g, '');
+
+    // compare
+    if (cleanStoredCode !== cleanInputCode) {
       return NextResponse.json(
         { data: "Invalid verification code." },
         { status: 401 }
       );
     }
 
-    const {
-      user_id,
-      first_name,
-      last_name,
-      username,
-      password,
-      phone,
-      role
-    } = pendingUser;
-
     // create auth token
     const authToken = jwt.sign(
-      { userId: user_id, role },
+      { 
+        userId: pendingUser.user_id, 
+        role: pendingUser.role 
+      },
       process.env.JWT_SECRET!,
       { expiresIn: "1h" }
     );
@@ -56,14 +58,14 @@ export async function POST(req: NextRequest) {
       (user_id, first_name, last_name, email, username, password, phone, role, is_active)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, TRUE)`,
       [
-        user_id,
-        first_name,
-        last_name,
-        email,
-        username,
-        password,
-        phone,
-        role
+        pendingUser.user_id,
+        pendingUser.first_name,
+        pendingUser.last_name,
+        pendingUser.email,
+        pendingUser.username,
+        pendingUser.password,
+        pendingUser.phone,
+        pendingUser.role
       ]
     );
 
@@ -78,8 +80,9 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (err: any) {
+    console.error(err);
     return NextResponse.json(
-      { data: err?.message || "Internal server error" },
+      { data:  "Internal server error" },
       { status: 500 }
     );
   }

@@ -6,7 +6,7 @@ async function getClient(): Promise<RedisClientType> {
   if (client) return client;
 
   client = createClient({
-    url: process.env.REDIS_URL || "redis://localhost:6379",
+    url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}` 
   });
 
   client.on("error", (err) => console.error("Redis error:", err));
@@ -60,9 +60,34 @@ export async function redisGetJSON<T>(key: string): Promise<T | null> {
   const value = await redisGet(key);
   if (!value) return null;
 
+  try {return JSON.parse(value) as T;}
+  catch {return null;}
+}
+
+export async function test(): Promise<void> {
   try {
-    return JSON.parse(value) as T;
-  } catch {
-    return null;
+    const client = await getClient();
+
+    console.log("Connected to Redis! Testing read/write...");
+
+    const testKey = "test:connection";
+    const testValue = "hello-redis";
+
+    // set key with a short TTL
+    await client.set(testKey, testValue, { EX: 30 });
+
+    // read it back
+    const value = await client.get(testKey);
+
+    if (value === testValue) {
+      console.log(`Redis test successful! Key '${testKey}' = '${value}'`);
+    } else {
+      console.log(`Redis test failed. Expected '${testValue}', got '${value}'`);
+    }
+
+    // clean up
+    await client.del(testKey);
+  } catch (err) {
+    console.error("Redis test failed:", err);
   }
 }
