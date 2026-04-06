@@ -18,8 +18,6 @@ export async function POST(req: NextRequest) {
     // retrieve pending user from redis
     const pendingUser = await redisGetJSON<PendingUser|any>(`verify:${email}`);
 
-    console.log(typeof pendingUser.first_name)
-
     // bro may need to reconsider his life desisions
     if (!pendingUser) {
       return NextResponse.json(

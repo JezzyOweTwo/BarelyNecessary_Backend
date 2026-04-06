@@ -19,24 +19,21 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
         if (body) options.body = JSON.stringify(body);
     }
 
-    const response = await fetch(`${baseURL}${route}`, options);
-
-    if (!response.ok) {
-        throw new Error(`${method} request failed: ${response.status}`);
-    }
-
-    let result: ApiResponse<T>;
     try {
-        result = await response.json();
-    } catch (err) {
-        throw new Error(`${method} request returned invalid JSON`);
-    }
+        const response = await fetch(`${baseURL}${route}`, options);
 
-    if (!result.success) {
-        throw new Error(`${method} request returned success=false`);
-    }
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${method} request failed: ${response.body}`);
+        }
 
-    return result.data;
+        const result: ApiResponse<T> = await response.json();
+        return result.data;
+    } 
+    
+    catch (err) {
+        console.error(err);
+        throw err;
+    }
 }
 
 export function api_post<T>(route: string, body?: object): Promise<T> {

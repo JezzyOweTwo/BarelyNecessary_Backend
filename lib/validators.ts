@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken"
 import { NextResponse } from "next/server";
-import { validate as uuidValidate } from "uuid";
 
 // this validation function will ensure that the user is logged in as an admin.
 export async function requireAdminAuth(req: Request) :Promise<NextResponse<any>>{
@@ -12,7 +11,7 @@ export async function requireAdminAuth(req: Request) :Promise<NextResponse<any>>
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
 
-    if (decoded.role !== "admin" || !uuidValidate(decoded.userID)) {
+    if (decoded.role !== "admin" || !isValidUUID(decoded.userID)) {
         return NextResponse.json({ data: "Forbidden: Invalid admin credentials!"},{ status: 403});
     }
 
@@ -29,7 +28,7 @@ export async function requireAuth(req: Request) :Promise<NextResponse<any>>{
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
 
-    if ((decoded.role !== "admin"&&decoded.role !== "customer") || !uuidValidate(decoded.userID)) {
+    if ((decoded.role !== "admin"&&decoded.role !== "customer") || !isValidUUID(decoded.userID)) {
         return NextResponse.json({ data: "Forbidden: malformed JWT Key"},{ status: 403});
     }
 
@@ -38,15 +37,20 @@ export async function requireAuth(req: Request) :Promise<NextResponse<any>>{
 
 // this validation function will ensure the user's ID is a present, and correctly formed UUID.
 // note that it does NOT check if the session is valid or not. Call requireAuth() instead for that
-export async function validateUserID(req: Request,id:String) :Promise<NextResponse<any>>{
+export async function validateUserID(req: Request,id:string) :Promise<NextResponse<any>>{
 
     if (!id) {
         return NextResponse.json({ data: "Missing user ID!"},{ status: 401});
     }
     
-    if (!uuidValidate(id)){
+    if (!isValidUUID(id)){
         return NextResponse.json({ data: "User ID Malformed!"},{ status: 401});
     }
     
     return NextResponse.json({ status: 200});
+}
+
+function isValidUUID(uuid: string):boolean {
+  const uuidV4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidV4Regex.test(uuid);
 }

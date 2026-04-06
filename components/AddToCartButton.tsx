@@ -1,6 +1,7 @@
 "use client";
 
 import { addToCart } from "@/lib/cart";
+import {format_product_query} from "@/lib/image_store_handler";
 
 type Props = {
   product: {
@@ -15,7 +16,7 @@ type Props = {
 
 export default function AddToCartButton({ product }: Props) {
   const handleClick = () => {
-    addToCart({ ...product, image_url: product.image_url ?? null, quantity: 1 });
+    addToCart({ ...product, image_url:format_product_query(product.product_id) ?? null, quantity: 1 });
     alert("Added to cart");
   };
 

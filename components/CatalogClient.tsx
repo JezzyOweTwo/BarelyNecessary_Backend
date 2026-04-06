@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
-import {Product, Category} from "@/lib/types"
+import {Product, Category} from "@/lib/types";
+import {format_product_query} from "@/lib/image_store_handler";
 
 type SortOption =
   | "default"
@@ -205,7 +206,7 @@ export default function CatalogClient({
                     brand: product.brand ?? undefined,
                     model: product.model ?? undefined,
                     short_tagline: product.short_tagline ?? undefined,
-                    image_url: product.image_url ?? undefined,
+                    image_url: format_product_query(product.product_id) ?? undefined,
                     is_featured: Boolean(product.is_featured),
                     is_active: Boolean(product.is_active),
                     price: Number(product.price),
