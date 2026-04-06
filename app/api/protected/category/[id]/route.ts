@@ -52,3 +52,9 @@ export async function GET(_request: Request, context: RouteContext<{id:string}>)
     );
   }
 }
+
+export function parseId(id: string | undefined): number | null {
+  if (!id) return null;
+  const parsed = Number(id);
+  return Number.isNaN(parsed) ? null : parsed;
+}

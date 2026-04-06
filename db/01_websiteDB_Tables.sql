@@ -1,10 +1,21 @@
-CREATE DATABASE IF NOT EXISTS 4413_Project_Website;
+DROP DATABASE IF EXISTS 4413_Project_Website;
+CREATE DATABASE 4413_Project_Website;
 USE 4413_Project_Website;
 
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS cart_items;
+DROP TABLE IF EXISTS carts;
+DROP TABLE IF EXISTS payment_methods;
+DROP TABLE IF EXISTS addresses;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY, 
+    user_id VARCHAR(36) UNIQUE PRIMARY KEY NOT NULL, 
     first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,	
     email VARCHAR(150) NOT NULL UNIQUE,
     username VARCHAR(70) UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -17,7 +28,7 @@ CREATE TABLE users (
 
 CREATE TABLE addresses (
 	address_id int auto_increment primary key, 
-    user_id int not null,
+    user_id VARCHAR(36) not null,
     address_type enum('shipping', 'billing') not null,
     street varchar(300) not null,
     city varchar(100) not null,
@@ -32,7 +43,7 @@ CREATE TABLE addresses (
 );
 CREATE TABLE payment_methods (
     payment_id int auto_increment primary key,
-    user_id int not null,
+    user_id varchar(36) not null,
     cardholder_name varchar(150) not null,
     card_last4 char(4) not null,
     card_brand varchar(50),
@@ -70,7 +81,7 @@ CREATE TABLE products (
 );
 CREATE TABLE carts (
     cart_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE,
+    user_id VARCHAR(36) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
@@ -94,7 +105,7 @@ CREATE TABLE cart_items (
 );
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
     shipping_address_id INT,
     billing_address_id INT,
     payment_id INT,

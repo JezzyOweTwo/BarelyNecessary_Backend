@@ -1,16 +1,25 @@
 services:
 
   db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
     ports:
       - "${DB_PORT}:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
   
   redis:
+    image: redis/redis-stack
+    container_name: redis_cache
     ports:
       - "${REDIS_PORT}:6379"
+      - "${REDIS_GUI_PORT}:8001"
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
 
   images:
     image: minio/minio
@@ -20,7 +29,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${IMAGES_USER}
       MINIO_ROOT_PASSWORD: ${IMAGES_PASSWORD}
+    volumes:
+    - ./minio-data:/data
 
     command: server /data --console-address ":9001"
-
-    

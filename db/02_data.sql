@@ -49,35 +49,38 @@ VALUES
 );
 
 INSERT INTO users (
-  first_name,
-  last_name,
-  email,
-  username,
-  password,
-  phone,
-  role,
-  is_active
+	user_id,
+	first_name,
+	last_name,
+	email,
+	username,
+	password,
+	phone,
+	role,
+	is_active
 )
 VALUES
 (
-  'Nadeen',
-  'H',
-  'nadeen@example.com',
-  'nadeenrh',
-  'nadeenPass',
-  '6470000000',
-  'admin',
-  TRUE
+	'12345678-87654321-12345678-87654321',
+	'Nadeen',
+	'H',
+	'nadeen@example.com',
+	'nadeenrh',
+	'nadeenPass',
+	'6470000000',
+	'admin',
+	TRUE
 ),
 (
-  'Test',
-  'User',
-  'testuser@example.com',
-  'testuser1',
-  'testPass',
-  '6471111111',
-  'customer',
-  TRUE
+	'87654321-12345678-87654321-12345678',
+	'Test',
+	'User',
+	'testuser@example.com',
+	'testuser1',
+	'testPass',
+	'6471111111',
+	'customer',
+	TRUE
 );
 
 SELECT * FROM categories;

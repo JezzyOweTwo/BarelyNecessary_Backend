@@ -80,7 +80,7 @@ export interface Order {
 }
 
 export interface User {
-  user_id: number;
+  user_id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -89,4 +89,8 @@ export interface User {
   phone?: string;
   role: UserRole;
   is_active: boolean;
+}
+
+export interface PendingUser extends User {
+  verification_code?: string;
 }

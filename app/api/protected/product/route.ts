@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import {query_db} from "@/lib/database_handler";
 import { Product } from "@/lib/types";

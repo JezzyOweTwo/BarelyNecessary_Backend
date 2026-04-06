@@ -1,5 +1,5 @@
 # Dockerfile.prod
-# syntax=docker/dockerfile:1.4
+# This Docker file will only be used for production. 
 FROM node:20-alpine
 WORKDIR /app
 

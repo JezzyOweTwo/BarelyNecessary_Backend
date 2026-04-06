@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Product } from "@/lib/types";
 import AddToCartButton from "./AddToCartButton";
+import {format_product_query} from "@/lib/image_store_handler";
 
 type ProductCardProps = {
   product: Product;
@@ -79,7 +80,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               product={{product_id: product.product_id,
               name: product.name,
               price: product.price,
-              image_url: product.image_url,}}/>
+              image_url: format_product_query(product.product_id),}}/>
   
           </div>
         </div>
