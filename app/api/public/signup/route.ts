@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     }
 
     let role: "admin" | "customer" = "customer"; 
-    const userID = uuidv4();  // 36 digit UUID in the format: xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx
+    const userID = uuidv4();    // 36 digit UUID in the format: xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx
 
     // checks if the caller is an administrator or not.
     const validate = await guardRoute(req,true,requireAdminAuth);

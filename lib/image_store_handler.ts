@@ -41,5 +41,5 @@
 
 // returns a queryable string for the product image.
 export function format_product_query(productID:Number):string{
-    return `http://${process.env.IMAGES_HOST}:${process.env.IMAGES_PORT}/product-images/${productID}.jpg`;
+    return `http://${process.env.NEXT_PUBLIC_IMAGES_HOST}:${process.env.NEXT_PUBLIC_IMAGES_PORT}/product-images/${productID}.jpg`;
 }

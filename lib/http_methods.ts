@@ -1,4 +1,5 @@
 const baseURL:string = `http://${process.env.APP_HOST}:${process.env.APP_PORT}`;
+import {get_server_auth_token} from "@/lib/server_init";
 
 type ApiResponse<T> = {
     success: boolean;
@@ -7,12 +8,13 @@ type ApiResponse<T> = {
 
 type HttpMethod = "POST" | "PUT" | "DELETE" | "GET";
 
-async function api_request<T>(method: HttpMethod, route: string, body?: object): Promise<T> {
+async function api_request<T>(method: HttpMethod, route: string, body?: object): Promise<T> { 
+    const server_auth_token = `Bearer ${await get_server_auth_token()}`;
     const options: RequestInit = {
         method,
-        headers: {}
+        headers:{authorization: server_auth_token}
     };
-
+    
     // Only set Content-Type and body for non-GET requests
     if (method !== "GET") {
         options.headers = { "Content-Type": "application/json" };
@@ -21,12 +23,13 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
 
     try {
         const response = await fetch(`${baseURL}${route}`, options);
-
+        
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${method} request failed: ${response.body}`);
         }
 
         const result: ApiResponse<T> = await response.json();
+
         return result.data;
     } 
     

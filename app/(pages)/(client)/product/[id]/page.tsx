@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/AddToCartButton";
 import { Product,Category } from "@/lib/types";
 import { api_get } from "@/lib/http_methods";
+import {format_product_query} from "@/lib/image_store_handler";
+import Image from "next/image";
 
 type PageProps = {
   params: Promise<{
@@ -16,16 +18,18 @@ export default async function ProductDetailsPage({ params }: PageProps) {
 
   if (Number.isNaN(productId)) {notFound();}
 
-  const product:Product = await api_get<Product>("/api/product/id");
+  const product:Product = await api_get<Product>(`/api/protected/product/${id}`);
   // const categories:Category[] = await api_get<Category[]>("/api/category");
 
   if (!product) {notFound();}
 
   const categoryID = product.category_id;
-  const category:Category = await api_get<Category>(`/api/Category/${categoryID}`);
+  const category:Category = await api_get<Category>(`/api/protected/category/${categoryID}`);
   const isFeatured = Boolean(product.is_featured);
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
   const isOutOfStock = product.stock_quantity <= 0;
+  const product_image_url = format_product_query(product.product_id);
+
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
@@ -48,10 +52,15 @@ export default async function ProductDetailsPage({ params }: PageProps) {
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
-            <div className="flex h-[420px] items-center justify-center bg-gray-100">
-              <span className="text-base text-gray-400">
-                {product.image_url ?? "Product Image"}
-              </span>
+            <div className="relative h-[420px] bg-gray-100">
+              <Image 
+                src={product_image_url}
+                alt={product.name}
+                fill
+                className="object-contain object-center"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                unoptimized
+              />
             </div>
           </div>
 
@@ -121,7 +130,7 @@ export default async function ProductDetailsPage({ params }: PageProps) {
                 product={{product_id: product.product_id,
                 name: product.name,
                 price: product.price,
-                image_url: product.image_url ?? undefined,}}/>
+                image_url: product_image_url ?? undefined,}}/>
 
               <Link
                 href="/catalog"

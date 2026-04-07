@@ -6,6 +6,16 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9000",
+        pathname: "/**",
+      },
+    ],
+  },
   env: {
     DB_HOST: process.env.DB_HOST,
     DB_PORT: process.env.DB_PORT,

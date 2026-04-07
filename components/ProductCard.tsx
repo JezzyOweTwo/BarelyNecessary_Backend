@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Product } from "@/lib/types";
 import AddToCartButton from "./AddToCartButton";
 import {format_product_query} from "@/lib/image_store_handler";
+import Image from "next/image";
 
 type ProductCardProps = {
   product: Product;
@@ -14,7 +15,14 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
       <div className="relative flex h-52 items-center justify-center bg-gray-100">
-        <span className="text-sm text-gray-400">Product Image</span>
+        <Image 
+          src={format_product_query(product.product_id)}
+          alt={product.name}
+          fill
+          className="object-contain object-center"
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          unoptimized
+        />  
 
         <div className="absolute left-3 top-3 flex gap-2">
           {product.is_featured && (

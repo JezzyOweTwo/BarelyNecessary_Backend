@@ -3,6 +3,8 @@ import {query_db} from "@/lib/database_handler";
 import { Category } from "@/lib/types";
 
 export async function GET(_request: Request) {
+  console.log("this is running!");
+
   try {
 
     const categories = await query_db(
