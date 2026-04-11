@@ -56,9 +56,9 @@ CREATE TABLE payment_methods (
         on update cascade
 );
 CREATE TABLE categories (
-    category_id int auto_increment primary key,
-    category_name varchar(100) not null unique,
-    description varchar(300)
+    category_id int primary key,
+    category_name varchar(200) not null unique,
+    description TEXT
 );
 CREATE TABLE products (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -144,8 +144,8 @@ CREATE TABLE order_items (
     CHECK (quantity > 0)
 );
 
-SELECT * FROM categories;
-SELECT * FROM products;
-SELECT * FROM users;
+-- SELECT * FROM categories;
+-- SELECT * FROM products;
+-- SELECT * FROM users;
 
 
