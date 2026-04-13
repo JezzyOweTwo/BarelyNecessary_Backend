@@ -1,3 +1,5 @@
+import {NextResponse} from "next/server";
+
 export type UserRole = "customer" | "admin";
 
 export interface Address {
@@ -94,3 +96,8 @@ export interface User {
 export interface PendingUser extends User {
   verification_code?: string;
 }
+export interface ValidationError{
+  message: string;
+  code: number;
+}
+export type Validator<ExtraArgs extends any[] = []> = (...args: ExtraArgs) => Promise<ValidationError | null>;

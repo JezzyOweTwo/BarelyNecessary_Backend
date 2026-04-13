@@ -2,8 +2,14 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import {query_db} from "@/lib/database_handler";
 import { Product } from "@/lib/types";
+import { guardRoute } from "@/lib/guard_route";
+import { requireAuth } from "@/lib/validators";
 
 export async function GET() {
+  // ensures the user is authenticated before proceeding.
+  const validation = await guardRoute(requireAuth,false);
+  if (validation) return validation;
+  
   try {
     const products = await query_db(`
       SELECT

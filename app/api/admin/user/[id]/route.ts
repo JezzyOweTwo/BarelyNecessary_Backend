@@ -2,18 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/database_handler";
 import { User } from "@/lib/types";
 import { guardRoute } from "@/lib/guard_route";
-import { validateUserID } from "@/lib/validators";
+import { requireAuth, isValidUUID } from "@/lib/validators";
 
 const TABLE = "users";          // table name
 const ID_COLUMN = "user_id";    // primary key column
 
 // GET: fetch a user by ID
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    // ensures the user is authenticated before proceeding.
+    const validation = await guardRoute(requireAuth,true);
+    if (validation) return validation;
+
     const userId:string = params.id;
 
     // ensures caller passed a valid UUID.
-    const validator = guardRoute(req,true,validateUserID,userId);    // returns null if valid, 
-    if (validator) return validator;                                 // returns redirection object if validation failed
+    const validator = guardRoute(isValidUUID,userId);           // returns null if valid, 
+    if (validator) return validator;                            // returns redirection object if validation failed
 
     const user = await db.getById<User>(TABLE, ID_COLUMN, userId);
     if (!user) return NextResponse.json({ data: "User not found" }, { status: 404 });
@@ -24,11 +28,17 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 // PATCH: update user fields dynamically
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+    // ensures the user is authenticated before proceeding.
+    const validation = await guardRoute(requireAuth,true);
+    if (validation) return validation;
+
     const userId:string = params.id;
 
     // ensures caller passed a valid UUID.
-    const validator = guardRoute(req,true,validateUserID,userId);    // returns null if valid, 
-    if (validator) return validator;                                 // returns redirection object if validation failed
+    const validator = guardRoute(isValidUUID,userId);           // returns null if valid, 
+    if (validator) return validator;                            // returns redirection object if validation failed
+
+
     const body = await req.json();
 
     // Pick only fields allowed to update
@@ -74,11 +84,15 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
 // DELETE: remove a user
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+    // ensures the user is authenticated before proceeding.
+    const validation = await guardRoute(requireAuth,true);
+    if (validation) return validation;
+
     const userId:string = params.id;
 
     // ensures caller passed a valid UUID.
-    const validator = guardRoute(req,true,validateUserID,userId);    // returns null if valid, 
-    if (validator) return validator;                                 // returns redirection object if validation failed
+    const validator = guardRoute(isValidUUID,userId);           // returns null if valid, 
+    if (validator) return validator;                            // returns redirection object if validation failed                               // returns redirection object if validation failed
 
     const user = await db.getById<User>(TABLE, ID_COLUMN, userId);
     if (!user) return NextResponse.json({ data: "User not found" }, { status: 404 });

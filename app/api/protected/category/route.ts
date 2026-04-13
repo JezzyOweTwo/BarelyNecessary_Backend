@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import {query_db} from "@/lib/database_handler";
 import { Category } from "@/lib/types";
+import { guardRoute } from "@/lib/guard_route";
+import { requireAuth } from "@/lib/validators";
 
 export async function GET(_request: Request) {
-  console.log("this is running!");
+  // ensures the user is authenticated before proceeding.
+  const validation = await guardRoute(requireAuth,false);
+  if (validation) return validation;
 
   try {
 
