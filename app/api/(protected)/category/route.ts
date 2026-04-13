@@ -8,7 +8,7 @@ export async function GET(_request: Request) {
   // ensures the user is authenticated before proceeding.
   const validation = await guardRoute(requireAuth,false);
   if (validation) return validation;
-
+  
   try {
 
     const categories = await query_db(
@@ -23,6 +23,7 @@ export async function GET(_request: Request) {
     ) as Category[];
 
     if (categories.length === 0) {
+      
       return NextResponse.json(
         { success: false, message: "Apparently, we don't have a single product category." },
         { status: 404 }
@@ -33,7 +34,9 @@ export async function GET(_request: Request) {
       success: true,
       data: categories,
     });
-  } catch (error) {
+  } 
+  
+  catch (error) {
     console.error("Error parsing product category array:", error);
 
     return NextResponse.json(

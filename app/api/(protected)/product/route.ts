@@ -6,6 +6,7 @@ import { guardRoute } from "@/lib/guard_route";
 import { requireAuth } from "@/lib/validators";
 
 export async function GET() {
+  
   // ensures the user is authenticated before proceeding.
   const validation = await guardRoute(requireAuth,false);
   if (validation) return validation;

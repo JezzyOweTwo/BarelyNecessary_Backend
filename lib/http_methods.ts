@@ -23,9 +23,21 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
 
     try {
         const response = await fetch(`${baseURL}${route}`, options);
-        
+
         if (!response.ok) {
-            throw new Error(`Error ${response.status}: ${method} request failed: ${response.body}`);
+            if (response.status === 404) 
+                throw new Error(`API route not found: ${route}`);
+            else if (response.status === 500) 
+                throw new Error(`Server error while processing ${method} request to ${route}`);
+            else if (response.status === 401)
+                throw new Error(`Unauthorized: Invalid or missing authentication token for ${method} request to ${route}`);
+            else if (response.status === 403)
+                throw new Error(`Forbidden: You do not have permission to perform ${method} request to ${route}`);
+            else if (response.status === 400)
+                throw new Error(`Bad Request: The server could not understand the ${method} request to ${route} due to invalid syntax.`);   
+
+            else 
+                throw new Error(`Error Completing ${method}`);
         }
 
         const result: ApiResponse<T> = await response.json();
@@ -33,8 +45,7 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
         return result.data;
     } 
     
-    catch (err) {
-        console.error(err);
+    catch (err:any) {
         throw err;
     }
 }
