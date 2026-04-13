@@ -26,12 +26,15 @@ export async function requireAuth(requireAdmin:boolean) :Promise<ValidationError
             throw new Error("500|Server configuration error: missing JWT secret");
 
         // decodes JWT, verifies user id token
-        const decoded = jwt.verify(token, secret) as any;
+        let decoded;
+        try{decoded = jwt.verify(token, secret) as any;}
+        catch (err) {throw new Error("401|Authorization error: Invalid or expired token");}
 
-        if (!decoded.userID) 
+        //console.log(decoded);
+        if (!decoded.userId) 
             throw new Error("401|Authorization error: User Identification Token Missing");
     
-        if (! await isValidUUID(decoded.userID))
+        if ( await isValidUUID(decoded.userId))
             throw new Error("401|Authorization error: User Identification Token Malformed");
         
         // ensures user is an admin
@@ -55,14 +58,14 @@ export async function requireAuth(requireAdmin:boolean) :Promise<ValidationError
 }
 
 export async function isValidUUID(uuid: string):Promise<ValidationError | null> {
+    console.log(uuid);
     try{
+        uuid = uuid.trim();
         const uuidV4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         const isValid =  uuidV4Regex.test(uuid);
         if (!isValid) throw new Error("400|Validation error: Invalid UUID format");
     }
-    catch (err:any){
-        return generateError(err);
-    }
+    catch (err:any){return generateError(err);}
     return null;
 }
 
@@ -73,10 +76,28 @@ function extractBearerToken(authHeader: string | null | undefined): string | nul
 }
 
 function generateError(err:any): ValidationError {
-    const errMsgAndCode = err?.message || "500|Unknown error!";
+    // console.log(err);
+
+    let errorCode:number = 500;
+    let errorMessage = "An unknown error occurred.";
+
+    const errMsgAndCode = (err instanceof Error && typeof err.message === "string") ?  err.message : "500|Unknown error!";
     const errorArr = errMsgAndCode.split("|");
-    const errorcode:number =  parseInt(errorArr[0]);
-    const errormessage:string =  errorArr[1];
-    const validationErr:ValidationError = {message : errormessage, code : errorcode};
+    
+    // if it was an error from our code, it will be in the format "code|message". If not, we just return a generic 500 error.
+    if (errorArr.length===2){
+        errorCode = parseInt(errorArr[0]); 
+        errorMessage = errorArr[1];
+    }
+    
+    // deals with errors thrown in our code that don't follow the "code|message" format, but still have a message property. 
+    else {
+        if ((err.message!==null&& (err.message!==undefined) && (err.message !== "") && (typeof err.message === "string")) )
+            errorMessage = err.message;
+    }
+    const validationErr:ValidationError = {message : errorMessage, code : errorCode};
+
+    // console.log("Validation error: ", validationErr);
     return validationErr;
 }
+//

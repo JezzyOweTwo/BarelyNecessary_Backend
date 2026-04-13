@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
 
 // deletes all users, lmfao
 export async function DELETE(req: NextRequest) {
+  // ensures the user is authenticated before proceeding.
   const validation = await guardRoute(requireAuth,true);
   if (validation) return validation;
   await db.query_db(`DELETE FROM \`${TABLE}\``);

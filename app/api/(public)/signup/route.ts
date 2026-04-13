@@ -3,10 +3,10 @@ import bcrypt from "bcrypt";
 import { exists } from "@/lib/database_handler";
 import {redisSetJSON, testRedis} from "@/lib/redis_handler"
 import { v4 as uuidv4 } from "uuid";
-import {requireAdminAuth} from "@/lib/validators";
+import {requireAuth} from "@/lib/validators";
 import {guardRoute} from "@/lib/guard_route"
 import otpGenerator from "otp-generator";
-import { PendingUser } from "@/lib/types";
+import { PendingUser,Mail } from "@/lib/types";
 import { sendEmail } from "@/lib/email-sender";
 
 const VERIFICATION_CODE_LENGTH = 5;
@@ -20,7 +20,7 @@ const VERIFICATION_CODE_CONFIG = {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { first_name, last_name, email, username, password, phone, isAdmin } = body;
+    const { first_name, last_name, email, username, password, phone_number, isAdmin } = body;
     const missingFields = [];
 
     if (!first_name) missingFields.push("first_name");
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (!email) missingFields.push("email");
     if (!username) missingFields.push("username");
     if (!password) missingFields.push("password");
-    if (!phone) missingFields.push("phone number");
+    if (!phone_number) missingFields.push("phone_number");
 
     if (missingFields.length > 0) {
       return NextResponse.json(
@@ -38,10 +38,10 @@ export async function POST(req: NextRequest) {
     }
 
     let role: "admin" | "customer" = "customer"; 
-    const userID = uuidv4();    // 36 digit UUID in the format: xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx
-
+    const userID = uuidv4();    // 36 digit UUID in the format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    // console.log(`Generated userID: ${userID}`);
     // checks if the caller is an administrator or not.
-    const validate = await guardRoute(req,true,requireAdminAuth);
+    const validate = await guardRoute(requireAuth,true);
     if (!validate) role="admin"; // guardRoute only returns a value if it FAILS, not succeeds.
 
     // checks if the email is already in the DB
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
         email: email,
         username: username,
         password: hashedPassword,
-        phone: phone,
+        phone: phone_number,
         role: role,
         is_active: false
     }
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
   }
 
   catch (error) {
-    console.error("Unknown error: Signup failed:", error);
+    console.error("Unknown error: Signup failed:\n", error);
 
     return NextResponse.json(
       { message: "Unknown error: Signup failed." },
@@ -88,22 +88,22 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function sendValidationEmail(user:PendingUser){
-  const code = otpGenerator.generate(VERIFICATION_CODE_LENGTH,VERIFICATION_CODE_CONFIG );
-  user.verification_code = code;
-  
-  try{
-    await redisSetJSON(`verify:${user.email}`, user, CODE_EXPIRATION_TIME);
-    await testRedis();
-    await sendEmail(
-      user.email,
-      "Barely Neccesary Account Signup",
-      `Hello and welcome to our app! Please verify your account with the following code: ${code}`
-    )
-  } 
-  
-  catch (err){
-    console.error(err);
-    throw err;
+  async function sendValidationEmail(user:PendingUser){
+
+    try{
+      const code = otpGenerator.generate(VERIFICATION_CODE_LENGTH,VERIFICATION_CODE_CONFIG );
+      user.verification_code = code;
+
+      await redisSetJSON(`verify:${user.email}`, user, CODE_EXPIRATION_TIME);
+      const mail:Mail = {
+        to: user.email,
+        subject: "Barely Necessary Account Signup",
+        text: `Hello and welcome to our app! Please verify your account with the following code: ${code}`
+      };
+      await sendEmail(mail);
+    } 
+    
+    catch (err){
+      throw err;
+    }
   }
-}

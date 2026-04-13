@@ -1,4 +1,5 @@
-// deprecated!
+// file used to be named middleware.ts, but was renamed to old-middleware.ts to avoid confusion.
+// next is also automatically looking for middleware.ts, so was renamed to avoid conflicts.
 
 // import { NextRequest } from "next/server";
 // import { adminMiddleware } from "@/middleware/admin_middleware";
