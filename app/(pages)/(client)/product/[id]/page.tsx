@@ -18,13 +18,13 @@ export default async function ProductDetailsPage({ params }: PageProps) {
 
   if (Number.isNaN(productId)) {notFound();}
 
-  const product:Product = await api_get<Product>(`/api/protected/product/${id}`);
+  const product:Product = await api_get<Product>(`/api/product/${id}`);
   // const categories:Category[] = await api_get<Category[]>("/api/category");
 
   if (!product) {notFound();}
 
   const categoryID = product.category_id;
-  const category:Category = await api_get<Category>(`/api/protected/category/${categoryID}`);
+  const category:Category = await api_get<Category>(`/api/category/${categoryID}`);
   const isFeatured = Boolean(product.is_featured);
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
   const isOutOfStock = product.stock_quantity <= 0;
