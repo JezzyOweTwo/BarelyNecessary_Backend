@@ -14,8 +14,8 @@ INSERT INTO categories (category_id, category_name, description) VALUES
 
 INSERT INTO users (user_id,first_name,last_name,email,username,password,phone,role,is_active)
 VALUES
-('12345678-87654321-12345678-87654321','Nadeen','H','nadeen@example.com','nadeenrh','nadeenPass','6470000000','admin',TRUE),
-('87654321-12345678-87654321-12345678','Test','User','testuser@example.com','testuser1','testPass','6471111111','customer',TRUE);
+('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44','Nadeen','H','nadeen@example.com','nadeenrh','nadeenPass','6470000000','admin',TRUE),
+('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91','Test','User','testuser@example.com','testuser1','testPass','6471111111','customer',TRUE);
 
 -- SELECT * FROM categories;
 -- SELECT * FROM products;
