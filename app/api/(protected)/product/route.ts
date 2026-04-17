@@ -27,7 +27,7 @@ export async function GET() {
         is_featured,
         is_active
       FROM products
-      WHERE is_active = 1
+      
       ORDER BY product_id ASC
     `) as Product[];
 

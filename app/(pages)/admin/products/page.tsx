@@ -1,5 +1,5 @@
 import { api_get } from "@/lib/http_methods";
-import { Product } from "@/lib/types";
+import { Product, Category } from "@/lib/types";
 import BackButton from "@/components/BackButton";
 import AdminProductsTable from "@/components/AdminProductsTable";
 
@@ -7,11 +7,18 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminProductsPage() {
   let products: Product[] = [];
+  let categories: Category[] = [];
 
   try {
     products = await api_get<Product[]>("/api/product");
   } catch (err) {
     console.error("Failed to fetch products:", err);
+  }
+
+  try {
+    categories = await api_get<Category[]>("/api/category");
+  } catch (err) {
+    console.error("Failed to fetch categories:", err);
   }
 
   return (
@@ -31,7 +38,7 @@ export default async function AdminProductsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-        <AdminProductsTable products={products} />
+        <AdminProductsTable products={products} categories={categories} />
         <div className="py-2">
           <BackButton />
         </div>
