@@ -1,9 +1,12 @@
+import { api_get } from "@/lib/http_methods";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
-import { categories, products } from "@/lib/mock-data";
+import { Category, Product } from "@/lib/types";
 
-export default function HomePage() {
-  const featuredProducts = products.filter((product) => product.is_featured).slice(0, 3);
+export default async function HomePage() {
+   const products:Product[] = await api_get<Product[]>("/api/product");
+    const categories:Category[] = await api_get<Category[]>("/api/category");
+      const featuredProducts = products.filter((products) => products.is_featured).slice(0, 3);
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
@@ -97,15 +100,15 @@ export default function HomePage() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
+          {categories.map((categories) => (
             <div
-              key={category.category_id}
+              key={categories.category_id}
               className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
             >
               <p className="text-sm uppercase tracking-wide text-gray-500">Category</p>
-              <h3 className="mt-2 text-xl font-semibold">{category.category_name}</h3>
+              <h3 className="mt-2 text-xl font-semibold">{categories.category_name}</h3>
               <p className="mt-3 text-sm text-gray-600">
-                {category.description || "Explore products in this category."}
+                {categories.description || "Explore products in this category."}
               </p>
               <Link
                 href="/catalog"
@@ -127,8 +130,8 @@ export default function HomePage() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.product_id} product={product} />
+          {featuredProducts.map((products) => (
+            <ProductCard key={products.product_id} product={products} />
           ))}
         </div>
       </section>
