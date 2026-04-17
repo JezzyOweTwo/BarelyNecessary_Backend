@@ -761,6 +761,26 @@
     --foreground: #ededed;
   }
 }
+
+/* Manual override via `document.documentElement.classList.toggle("dark")` */
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Remap Tailwind v4 CSS variables so existing `bg-gray-*` utilities adapt. */
+  --color-white: #0a0a0a;
+  --color-black: #ffffff;
+
+  --color-gray-50: oklch(21% 0.034 264.665);
+  --color-gray-100: oklch(27.8% 0.033 256.848);
+  --color-gray-200: oklch(37.3% 0.034 259.733);
+  --color-gray-300: oklch(44.6% 0.03 256.802);
+  --color-gray-500: oklch(87.2% 0.01 258.338);
+  --color-gray-600: oklch(92.8% 0.006 264.531);
+  --color-gray-700: oklch(96.7% 0.003 264.542);
+  --color-gray-800: oklch(98.5% 0.002 247.839);
+  --color-gray-900: oklch(98.5% 0.002 247.839);
+}
 body {
   background: var(--background);
   color: var(--foreground);

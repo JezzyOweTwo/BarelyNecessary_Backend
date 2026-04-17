@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
     if (!email) missingFields.push("email");
     if (!username) missingFields.push("username");
     if (!password) missingFields.push("password");
-    if (!phone_number) missingFields.push("phone_number");
 
     if (missingFields.length > 0) {
       return NextResponse.json(
@@ -64,7 +63,7 @@ export async function POST(req: NextRequest) {
         email: email,
         username: username,
         password: hashedPassword,
-        phone: phone_number,
+        phone: typeof phone_number === "string" && phone_number.trim().length > 0 ? phone_number : undefined,
         role: role,
         is_active: false
     }

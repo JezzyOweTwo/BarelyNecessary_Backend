@@ -6,6 +6,11 @@ export type CartItem = {
   quantity: number;
 };
 
+function notifyCartUpdated() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event("cart:updated"));
+}
+
 export function getCart(): CartItem[] {
   if (typeof window === "undefined") return [];
 
@@ -15,6 +20,7 @@ export function getCart(): CartItem[] {
 
 export function saveCart(cart: CartItem[]) {
   localStorage.setItem("cart", JSON.stringify(cart));
+  notifyCartUpdated();
 }
 
 export function addToCart(product: CartItem) {
@@ -31,4 +37,25 @@ export function addToCart(product: CartItem) {
   }
 
   saveCart(cart);
+}
+
+export function setCartItemQuantity(product_id: number, quantity: number) {
+  const cart = getCart();
+  const next = cart
+    .map((item) =>
+      item.product_id === product_id
+        ? { ...item, quantity: Math.max(1, Math.floor(quantity)) }
+        : item
+    )
+    .filter((item) => item.quantity > 0);
+  saveCart(next);
+}
+
+export function removeFromCart(product_id: number) {
+  const cart = getCart();
+  saveCart(cart.filter((item) => item.product_id !== product_id));
+}
+
+export function clearCart() {
+  saveCart([]);
 }
