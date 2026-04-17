@@ -23,7 +23,7 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
 
     try {
         const response = await fetch(`${baseURL}${route}`, options);
-
+        
         if (!response.ok) {
             if (response.status === 404) 
                 throw new Error(`API route not found: ${route}`);
@@ -41,7 +41,6 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
         }
 
         const result: ApiResponse<T> = await response.json();
-
         return result.data;
     } 
     

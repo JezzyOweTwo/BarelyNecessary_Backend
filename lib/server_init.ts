@@ -15,6 +15,6 @@ export async function get_server_auth_token():Promise<string>{
         process.env.JWT_SECRET!
     );
      
-    console.log(`Server init: ${SYS_AUTH_TOKEN}`); 
+    console.log(`Server Authenication token:\nBearer ${SYS_AUTH_TOKEN}`); 
     return SYS_AUTH_TOKEN;
 }
