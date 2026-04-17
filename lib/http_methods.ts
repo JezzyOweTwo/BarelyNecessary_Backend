@@ -45,7 +45,7 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
         return result.data;
     } 
     
-    catch (err:any) {
+    catch (err) {
         throw err;
     }
 }
