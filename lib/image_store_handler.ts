@@ -40,6 +40,6 @@
 
 
 // returns a queryable string for the product image.
-export function format_product_query(productID:Number):string{
+export function format_product_query(productID:number):string{
     return `http://${process.env.NEXT_PUBLIC_IMAGES_HOST}:${process.env.NEXT_PUBLIC_IMAGES_PORT}/product-images/${productID}.jpg`;
 }

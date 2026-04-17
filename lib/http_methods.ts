@@ -17,7 +17,10 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
     
     // Only set Content-Type and body for non-GET requests
     if (method !== "GET") {
-        options.headers = { "Content-Type": "application/json" };
+        options.headers = {
+            "Content-Type": "application/json",
+            authorization: server_auth_token,
+        };
         if (body) options.body = JSON.stringify(body);
     }
 
@@ -44,7 +47,7 @@ async function api_request<T>(method: HttpMethod, route: string, body?: object):
         return result.data;
     } 
     
-    catch (err:any) {
+    catch (err) {
         throw err;
     }
 }

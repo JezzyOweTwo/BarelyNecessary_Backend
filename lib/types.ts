@@ -13,7 +13,7 @@ export interface Address {
   country: string;
   is_default: boolean;
 }
-
+// eslint(@typescript-eslint/no-empty-object-type)
 export type RouteContext<T extends Record<string, string> = {}> = {
   params: Promise<T>;
 };
@@ -100,10 +100,20 @@ export interface ValidationError{
   message: string;
   code: number;
 }
-export type Validator<ExtraArgs extends any[] = []> = (...args: ExtraArgs) => Promise<ValidationError | null>;
+export type Validator<ExtraArgs extends [] = []> = (...args: ExtraArgs) => Promise<ValidationError | null>;
 
 export interface Mail {
   to:string;
   subject:string;
   text:string;
+}
+
+export interface ApiResponse<T> {
+  data?: T;
+  error?: string;
+  status: number;
+}
+
+function eslint(arg0: number) {
+  throw new Error("Function not implemented.");
 }
