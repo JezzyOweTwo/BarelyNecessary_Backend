@@ -2,9 +2,9 @@ import { MailDataRequired } from "@sendgrid/helpers/classes/mail";
 import { Mail } from "@/lib/types";
 import sgMail from "@sendgrid/mail";
 
-var isSendGrid:boolean = false;
+let isSendGrid:boolean = false;
 const INTERNAL_EMAIL = process.env.GMAIL_EMAIL;
-var emailCount=1; // just for testing, lol
+let emailCount=1; // just for testing, lol
 
 // bro please don't spam this one. 
 export async function sendTestEmail(){

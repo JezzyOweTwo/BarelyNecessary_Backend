@@ -164,10 +164,10 @@ function CheckoutForm() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-3 lg:px-8">
+      <section className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:gap-12">
         <form
           onSubmit={onPlaceOrder}
-          className="lg:col-span-2 rounded-3xl border border-gray-200 bg-white p-8 shadow-sm"
+          className="mb-2 w-full rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
         >
           {canceled && (
             <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -270,7 +270,7 @@ function CheckoutForm() {
           </div>
         </form>
 
-        <aside className="h-fit rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <aside className="mb-2 w-full h-fit rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
           <h2 className="text-xl font-semibold">Order summary</h2>
           <div className="mt-5 space-y-3 text-sm">
             <div className="flex items-center justify-between">

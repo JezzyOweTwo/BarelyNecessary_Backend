@@ -146,8 +146,8 @@ CREATE TABLE order_items (
     CHECK (quantity > 0)
 );
 
--- SELECT * FROM categories;
--- SELECT * FROM products;
--- SELECT * FROM users;
+SELECT * FROM categories;
+SELECT * FROM products;
+SELECT * FROM users;
 
 

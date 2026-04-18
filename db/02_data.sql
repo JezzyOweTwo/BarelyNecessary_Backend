@@ -30,7 +30,7 @@ INSERT INTO products
 (category_id, name, brand, model, short_tagline, description, price, stock_quantity, image_url, is_featured, is_active)
 VALUES
 -- Category 1: Room & Setup (10)
-(1, 'Gaming Desk', 'Generic', 'GD-01', 'Full setup ready', 'Spacious desk with lighting and outlets. Makes your setup look productive even when you’re not.', 199.99, 10, NULL, 1, 1),
+(1, 'Gaming Desk', 'Generic', 'GD-01', 'Full setup ready', 'Spacious desk with lighting and outlets. Makes your setup look productive even when you are not.', 199.99, 10, NULL, 1, 1),
 (1, 'Ergonomic Chair', 'Generic', 'EC-02', 'Comfort support', 'Designed for long sessions and better posture. Supports your back through questionable life choices.', 149.99, 15, NULL, 1, 1),
 (1, 'LED Light Strip', 'Generic', 'LS-03', 'Custom lighting', 'App-controlled lighting for any mood. Mainly used to feel something.', 18.99, 40, NULL, 0, 1),
 (1, 'Smart Desk Lamp', 'Generic', 'DL-04', 'Adaptive lighting', 'Adjustable brightness and tone for focus. Or pretending to focus.', 39.99, 25, NULL, 0, 1),
