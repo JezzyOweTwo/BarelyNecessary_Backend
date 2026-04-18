@@ -17,7 +17,6 @@ INSERT INTO categories (category_id, category_name, description) VALUES
 -- SET SQL_SAFE_UPDATES = 0;
 -- DELETE FROM products;
 -- SET SQL_SAFE_UPDATES = 1;
-
 -- SELECT * FROM products;
 
 INSERT INTO products
