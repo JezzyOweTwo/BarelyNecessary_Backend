@@ -63,7 +63,7 @@ npm install
 
 Create containers for redis, minio, and mySql
 ```bash
-docker compose --env-file .env.development -f docker-compose-dev.yml up
+docker compose --env-file .env.development -f docker-compose-dev.yml up --build
 ```
 
 Actually runs the project

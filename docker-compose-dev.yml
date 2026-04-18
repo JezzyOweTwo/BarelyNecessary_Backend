@@ -1,16 +1,16 @@
 services:
 
-  # db:
-  #   image: mysql:8
-  #   container_name: mysql_db
-  #   restart: always
-  #   ports:
-  #     - "${DB_PORT}:3306"
-  #   volumes:
-  #     - ./db:/docker-entrypoint-initdb.d
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-  #     MYSQL_DATABASE: ${DB_NAME}
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
   
   redis:
     image: redis/redis-stack
@@ -21,17 +21,17 @@ services:
     environment:
       REDIS_PASSWORD: "${REDIS_PASSWORD}"
 
-  images:
-    image: minio/minio
-    ports:
-      - "${NEXT_PUBLIC_IMAGES_PORT}:9000"
-      - "${IMAGES_EDITOR_PORT}:9001" 
-    environment:
-      MINIO_ROOT_USER: ${IMAGES_USER}
-      MINIO_ROOT_PASSWORD: ${IMAGES_PASSWORD}
-    volumes:
-      - ./minio-data:/data
-    command: server /data --console-address ":9001"
+  # images:
+  #   image: minio/minio
+  #   ports:
+  #     - "${NEXT_PUBLIC_IMAGES_PORT}:9000"
+  #     - "${IMAGES_EDITOR_PORT}:9001" 
+  #   environment:
+  #     MINIO_ROOT_USER: ${IMAGES_USER}
+  #     MINIO_ROOT_PASSWORD: ${IMAGES_PASSWORD}
+  #   volumes:
+  #     - ./minio-data:/data
+  #   command: server /data --console-address ":9001"
 
 secrets:
   DB_USER:
