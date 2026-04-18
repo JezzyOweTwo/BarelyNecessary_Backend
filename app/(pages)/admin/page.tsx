@@ -40,12 +40,12 @@ export default function AdminDashboardPage() {
           </Link>
 
           <Link
-            href="/orders"
+            href="/admin/orders"
             className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
           >
             <h2 className="text-xl font-semibold">View Orders</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Check order and purchase information.
+              Check all customer orders and purchase information.
             </p>
           </Link>
         </div>

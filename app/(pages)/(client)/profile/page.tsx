@@ -12,12 +12,33 @@ type ProfileData = {
   role?: string;
   is_active?: boolean;
 };
+type Address = {
+  address_id: number;
+  address_type: "shipping" | "billing";
+  street: string;
+  city: string;
+  province: string;
+  postal_code: string;
+  country: string;
+  is_default: boolean;
+};
+
+type PaymentMethod = {
+  payment_id: number;
+  cardholder_name: string;
+  card_last4: string;
+  card_brand: string | null;
+  expiry_month: number;
+  expiry_year: number;
+  is_default: boolean;
+};
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [unauthorized, setUnauthorized] = useState(false);
+  
 
   const loadProfile = useCallback(async () => {
     setLoading(true);

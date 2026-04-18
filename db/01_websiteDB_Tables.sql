@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
-    user_id VARCHAR(37) UNIQUE PRIMARY KEY NOT NULL, 
+    user_id VARCHAR(50) UNIQUE PRIMARY KEY NOT NULL, 
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,	
     email VARCHAR(150) NOT NULL UNIQUE,
@@ -28,7 +28,7 @@ CREATE TABLE users (
 
 CREATE TABLE addresses (
 	address_id int auto_increment primary key, 
-    user_id VARCHAR(37) not null,
+    user_id VARCHAR(50) not null,
     address_type enum('shipping', 'billing') not null,
     street varchar(300) not null,
     city varchar(100) not null,
@@ -43,7 +43,7 @@ CREATE TABLE addresses (
 );
 CREATE TABLE payment_methods (
     payment_id int auto_increment primary key,
-    user_id varchar(37) not null,
+    user_id varchar(50) not null,
     cardholder_name varchar(150) not null,
     card_last4 char(4) not null,
     card_brand varchar(50),
@@ -81,7 +81,7 @@ CREATE TABLE products (
 );
 CREATE TABLE carts (
     cart_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id VARCHAR(37) NOT NULL UNIQUE,
+    user_id VARCHAR(50) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
@@ -105,7 +105,7 @@ CREATE TABLE cart_items (
 );
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id VARCHAR(37) NOT NULL,
+    user_id VARCHAR(50) NOT NULL,
     shipping_address_id INT,
     billing_address_id INT,
     payment_id INT,

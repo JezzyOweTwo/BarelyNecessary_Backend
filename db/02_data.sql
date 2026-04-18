@@ -81,7 +81,73 @@ VALUES
 (4, 'PenTesting Toolkit', 'Generic', 'PTK-49', 'Security bundle', 'General toolkit with accessories for lab testing and learning.', 89.99, 8, NULL, 0, 1),
 (4, 'NFC Cloner', 'Generic', 'NFC-50', 'Tap and test', 'Device used for NFC reading and lab experimentation.', 59.99, 7, NULL, 0, 1);
 
+INSERT INTO users (user_id,first_name,last_name,email,username,password,phone,role,is_active)
+VALUES
+('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44','Nadeen','H','nadeen@example.com','nadeenrh','nadeenPass','6470000000','admin',TRUE),
+('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91','Test','User','testuser@example.com','testuser1','testPass','6471111111','customer',TRUE);
+
+
+INSERT INTO addresses
+(user_id, address_type, street, city, province, postal_code, country, is_default)
+VALUES
+('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91', 'shipping', '123 Maple Street', 'Mississauga', 'Ontario', 'L5M2A1', 'Canada', TRUE),
+('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91', 'billing', '123 Maple Street', 'Mississauga', 'Ontario', 'L5M2A1', 'Canada', TRUE),
+('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44', 'shipping', '456 Oak Avenue', 'Toronto', 'Ontario', 'M4B1B3', 'Canada', TRUE),
+('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44', 'billing', '456 Oak Avenue', 'Toronto', 'Ontario', 'M4B1B3', 'Canada', TRUE);
+
+INSERT INTO payment_methods
+(user_id, cardholder_name, card_last4, card_brand, expiry_month, expiry_year, is_default)
+VALUES
+(d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91, 'Test User', '4242', 'Visa', 12, 2028, TRUE),
+('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44', 'Nadeen H', '1881', 'Mastercard', 9, 2029, TRUE);
+
+INSERT INTO orders
+(user_id, shipping_address_id, billing_address_id, payment_id, order_status, payment_status, total_amount)
+VALUES
+(d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91, 1, 2, 1, 'paid', 'accepted', 214.98),
+(d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91, 1, 2, 1, 'shipped', 'accepted', 59.98),
+('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44', 3, 4, 2, 'completed', 'accepted', 129.99);
+
+INSERT INTO order_items
+(order_id, product_id, quantity, price_at_purchase)
+VALUES
+(1, 1, 1, 199.99),
+(1, 7, 1, 14.99),
+(2, 18, 2, 19.99),
+(3, 39, 1, 129.99);
+
+
 SELECT category_id, COUNT(*) AS product_count
 FROM products
 GROUP BY category_id
 ORDER BY category_id;
+
+SELECT * FROM users;
+SELECT * FROM addresses;
+SELECT * FROM payment_methods;
+SELECT * FROM orders;
+SELECT * FROM order_items;
+
+SELECT address_id, user_id, address_type, street
+FROM addresses
+ORDER BY address_id;
+
+SELECT payment_id, user_id, card_last4, card_brand
+FROM payment_methods
+ORDER BY payment_id;
+
+
+SELECT * FROM addresses;
+SELECT * FROM payment_methods;
+
+INSERT INTO orders
+(user_id, shipping_address_id, billing_address_id, payment_id, order_status, payment_status, total_amount)
+VALUES
+('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91', 1, 2, 1, 'paid', 'accepted', 214.98);
+
+SELECT * FROM orders;
+
+SELECT user_id, first_name, last_name, email, username
+FROM users
+ORDER BY user_id;
+
