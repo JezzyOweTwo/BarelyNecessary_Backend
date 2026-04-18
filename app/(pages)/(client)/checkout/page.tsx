@@ -9,6 +9,15 @@ function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(amount);
 }
 
+type ProfileForCheckout = {
+  first_name?: string;
+  last_name?: string;
+};
+
+function fullNameFromProfile(p: ProfileForCheckout) {
+  return [p.first_name, p.last_name].filter(Boolean).join(" ").trim();
+}
+
 function CheckoutForm() {
   const searchParams = useSearchParams();
   const canceled = searchParams.get("canceled") === "1";
@@ -31,6 +40,34 @@ function CheckoutForm() {
     return () => {
       window.removeEventListener("cart:updated", sync);
       window.removeEventListener("storage", sync);
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function prefillFromAccount() {
+      const token = typeof window !== "undefined" ? localStorage.getItem("auth") : null;
+      if (!token) return;
+      try {
+        const res = await fetch("/api/profile", {
+          credentials: "include",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok || cancelled) return;
+        const json = (await res.json()) as { data?: ProfileForCheckout };
+        const p = json.data;
+        if (!p || cancelled) return;
+        const name = fullNameFromProfile(p);
+        if (name) {
+          setFullName((prev) => (prev.trim() ? prev : name));
+        }
+      } catch {
+        /* ignore pre-fill failures */
+      }
+    }
+    void prefillFromAccount();
+    return () => {
+      cancelled = true;
     };
   }, []);
 

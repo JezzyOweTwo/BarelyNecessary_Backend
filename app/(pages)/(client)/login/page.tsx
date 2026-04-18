@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, Suspense, useMemo, useState } from "react";
+import { AUTH_API } from "@/lib/auth_api";
 
 type LoginResponse =
   | {
@@ -23,7 +24,7 @@ function extractToken(authorization: string | undefined) {
   return trimmed.slice("Bearer ".length).trim() || null;
 }
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = useMemo(() => searchParams.get("next") ?? "/catalog", [searchParams]);
@@ -33,13 +34,20 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const registerHref = useMemo(() => {
+    const n = searchParams.get("next");
+    if (!n || n === "/catalog") return "/register";
+    return `/register?next=${encodeURIComponent(n)}`;
+  }, [searchParams]);
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
     try {
-      const res = await fetch("/api/(public)/login", {
+      const res = await fetch(AUTH_API.login, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
@@ -54,7 +62,6 @@ export default function LoginPage() {
       const token = extractToken(json.data.authorization);
       if (!token) throw new Error("Login succeeded but no token returned.");
 
-      // Store for client usage + allow server-side validators to read cookie if needed.
       localStorage.setItem("auth", token);
       localStorage.setItem(
         "user",
@@ -74,7 +81,7 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
       <section className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-2xl px-6 py-14 lg:px-8">
+        <div className="mx-auto max-w-2xl px-6 py-16 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
             Account
           </p>
@@ -85,18 +92,18 @@ export default function LoginPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-2xl px-6 py-10 lg:px-8">
+      <section className="mx-auto mt-10 max-w-2xl px-6 pb-16 pt-4 lg:px-8">
         <form
           onSubmit={onSubmit}
-          className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm"
+          className="rounded-3xl border border-gray-200 bg-white p-10 shadow-sm"
         >
           {error && (
-            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="mb-8 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
             </div>
           )}
 
-          <div className="grid gap-8">
+          <div className="grid gap-12">
             <div>
               <label className="mb-3 block text-sm font-medium text-gray-700" htmlFor="email">
                 Email
@@ -142,7 +149,7 @@ export default function LoginPage() {
 
             <p className="text-sm text-gray-600">
               Don’t have an account?{" "}
-              <Link href="/register" className="font-medium text-black underline">
+              <Link href={registerHref} className="font-medium text-black underline">
                 Create one
               </Link>
               .
@@ -151,5 +158,17 @@ export default function LoginPage() {
         </form>
       </section>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-gray-50 p-10 text-center text-gray-600">Loading…</main>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

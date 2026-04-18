@@ -63,6 +63,8 @@ export async function GET() {
     return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
   }
 
+  const userId = String(claims.userId).trim();
+
   try {
     const orders = (await query_db(
       `
@@ -80,7 +82,7 @@ export async function GET() {
       WHERE user_id = ?
       ORDER BY order_date DESC, order_id DESC
     `,
-      [claims.userId]
+      [userId]
     )) as OrderRow[];
 
     if (orders.length === 0) {

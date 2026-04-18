@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { getCart } from "@/lib/cart";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -21,6 +21,7 @@ function getAuthToken(): string | null {
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [cartCount, setCartCount] = useState(0);
   const [isAuthed, setIsAuthed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -47,7 +48,7 @@ export default function Navbar() {
     syncAuth();
     window.addEventListener("storage", syncAuth);
     return () => window.removeEventListener("storage", syncAuth);
-  }, []);
+  }, [pathname]);
 
   const logout = () => {
     localStorage.removeItem("auth");
@@ -85,14 +86,14 @@ export default function Navbar() {
 
           <Link
             href="/cart"
-            className="relative rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+            className="flex items-center gap-3 rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
           >
-            Cart
-            {cartCount > 0 && (
-              <span className="ml-2 rounded-full bg-black px-2 py-0.5 text-xs text-white">
+            <span>Cart</span>
+            {cartCount > 0 ? (
+              <span className="rounded-full bg-black px-2 py-1 text-center text-xs font-medium text-white">
                 {cartCount}
               </span>
-            )}
+            ) : null}
           </Link>
 
           {isAuthed ? (

@@ -16,17 +16,28 @@ function applyThemeClass(mode: ThemeMode) {
   root.classList.toggle("dark", isDark);
 }
 
+function readStoredTheme(): ThemeMode {
+  const saved = localStorage.getItem("theme");
+  return saved === "light" || saved === "dark" || saved === "system" ? saved : "system";
+}
+
 export default function ThemeToggle() {
-  const [mode, setMode] = useState<ThemeMode>(() => {
-    if (typeof window === "undefined") return "system";
-    const saved = localStorage.getItem("theme");
-    return saved === "light" || saved === "dark" || saved === "system" ? saved : "system";
-  });
+  // Must match SSR + first client paint so hydration succeeds; restore real preference after mount.
+  const [mode, setMode] = useState<ThemeMode>("system");
+  const [restored, setRestored] = useState(false);
 
   useEffect(() => {
+    const initial = readStoredTheme();
+    setMode(initial);
+    applyThemeClass(initial);
+    setRestored(true);
+  }, []);
+
+  useEffect(() => {
+    if (!restored) return;
     localStorage.setItem("theme", mode);
     applyThemeClass(mode);
-  }, [mode]);
+  }, [mode, restored]);
 
   useEffect(() => {
     const mq = window.matchMedia?.("(prefers-color-scheme: dark)");

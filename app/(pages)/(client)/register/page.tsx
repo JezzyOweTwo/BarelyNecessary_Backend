@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, Suspense, useMemo, useState } from "react";
+import { AUTH_API } from "@/lib/auth_api";
 
 type SignupResponse = { message: string } | { data: unknown; message?: string };
 type ValidateResponse =
@@ -45,8 +46,17 @@ function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = useMemo(() => searchParams.get("next") ?? "/catalog", [searchParams]);
+
+  const loginHref = useMemo(() => {
+    const n = searchParams.get("next");
+    if (!n || n === "/catalog") return "/login";
+    return `/login?next=${encodeURIComponent(n)}`;
+  }, [searchParams]);
+
   const [step, setStep] = useState<Step>("signup");
 
   const [firstName, setFirstName] = useState("");
@@ -81,7 +91,7 @@ export default function RegisterPage() {
 
   const canSubmitSignup = useMemo(() => {
     return Object.keys(fieldErrors).length === 0;
-  }, [firstName, lastName, email, username, password, confirmPassword]);
+  }, [fieldErrors]);
 
   const passwordsMatch = useMemo(() => {
     if (!password && !confirmPassword) return true;
@@ -97,8 +107,9 @@ export default function RegisterPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/(public)/signup", {
+      const res = await fetch(AUTH_API.signup, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           first_name: firstName,
@@ -129,8 +140,9 @@ export default function RegisterPage() {
     setInfo(null);
     setSubmitting(true);
     try {
-      const res = await fetch("/api/(public)/signup/validate", {
+      const res = await fetch(AUTH_API.signupValidate, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code }),
       });
@@ -155,7 +167,7 @@ export default function RegisterPage() {
       localStorage.setItem("user", JSON.stringify({ email }));
       document.cookie = `auth=${encodeURIComponent(token)}; path=/; samesite=lax`;
 
-      router.push("/catalog");
+      router.push(nextPath);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed.");
@@ -167,7 +179,7 @@ export default function RegisterPage() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
       <section className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-2xl px-6 py-14 lg:px-8">
+        <div className="mx-auto max-w-2xl px-6 py-16 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
             Account
           </p>
@@ -178,22 +190,22 @@ export default function RegisterPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-2xl px-6 py-10 lg:px-8">
-        <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
+      <section className="mx-auto mt-10 max-w-2xl px-6 pb-16 pt-4 lg:px-8">
+        <div className="rounded-3xl border border-gray-200 bg-white p-10 shadow-sm">
           {error && (
-            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="mb-8 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
             </div>
           )}
           {info && (
-            <div className="mb-6 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
+            <div className="mb-8 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
               {info}
             </div>
           )}
 
           {step === "signup" ? (
-            <form onSubmit={onSubmitSignup} className="grid gap-8">
-              <div className="grid gap-8 md:grid-cols-2">
+            <form onSubmit={onSubmitSignup} className="grid gap-12">
+              <div className="grid gap-x-12 gap-y-12 md:grid-cols-2">
                 <div>
                   <label
                     className="mb-3 block text-sm font-medium text-gray-700"
@@ -251,7 +263,7 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              <div className="grid gap-8 md:grid-cols-2">
+              <div className="grid gap-x-12 gap-y-12 md:grid-cols-2">
                 <div>
                   <label
                     className="mb-3 block text-sm font-medium text-gray-700"
@@ -349,14 +361,14 @@ export default function RegisterPage() {
 
               <p className="text-sm text-gray-600">
                 Already have an account?{" "}
-                <Link href="/login" className="font-medium text-black underline">
+                <Link href={loginHref} className="font-medium text-black underline">
                   Sign in
                 </Link>
                 .
               </p>
             </form>
           ) : (
-            <form onSubmit={onSubmitVerify} className="grid gap-8">
+            <form onSubmit={onSubmitVerify} className="grid gap-12">
               <div>
                 <p className="text-sm text-gray-600">
                   Verifying for <span className="font-medium text-gray-900">{email}</span>
@@ -377,7 +389,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div className="flex flex-col gap-3 md:flex-row">
+              <div className="flex flex-col gap-4 md:flex-row md:gap-5">
                 <button
                   type="submit"
                   disabled={submitting || code.trim().length === 0}
@@ -403,5 +415,17 @@ export default function RegisterPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-gray-50 p-10 text-center text-gray-600">Loading…</main>
+      }
+    >
+      <RegisterForm />
+    </Suspense>
   );
 }

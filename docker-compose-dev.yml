@@ -30,6 +30,5 @@ services:
       MINIO_ROOT_USER: ${IMAGES_USER}
       MINIO_ROOT_PASSWORD: ${IMAGES_PASSWORD}
     volumes:
-    - ./minio-data:/data
-
+      - ./minio-data:/data
     command: server /data --console-address ":9001"

@@ -1,3 +1,9 @@
-#deprecated
-# old command: docker compose --env-file .env.development -f docker-compose-dev.yml up
-# kept here in case i wanna switch back to this approach
+# This file intentionally does not define `services:`.
+# Use the dev stack (MySQL, Redis Stack, MinIO) from the repo root:
+#
+#   docker compose --env-file .env.development -f docker-compose-dev.yml up -d
+#
+# If your Docker plugin is old and does not support `compose`, try:
+#   docker-compose --env-file .env.development -f docker-compose-dev.yml up -d
+#
+# Next.js runs on the host (`npm run dev`), not in Compose.

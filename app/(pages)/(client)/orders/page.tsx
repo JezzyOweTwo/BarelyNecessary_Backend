@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type OrderItem = {
@@ -61,6 +62,7 @@ function paymentStatusPill(status: string) {
 }
 
 export default function OrdersPage() {
+  const pathname = usePathname();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -98,6 +100,14 @@ export default function OrdersPage() {
 
   useEffect(() => {
     void loadOrders();
+  }, [loadOrders, pathname]);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void loadOrders();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, [loadOrders]);
 
   const hasOrders = orders.length > 0;
@@ -119,7 +129,7 @@ export default function OrdersPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+      <section className="mx-auto max-w-7xl px-6 pt-16 pb-20 lg:px-8">
         {loading && (
           <div className="rounded-3xl border border-gray-200 bg-white p-10 text-center text-gray-600 shadow-sm">
             Loading your orders…
@@ -166,15 +176,17 @@ export default function OrdersPage() {
         )}
 
         {!loading && !unauthorized && !error && !hasOrders && (
-          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
-            <h2 className="text-xl font-semibold">No orders yet</h2>
-            <p className="mt-3 text-sm text-gray-600">{emptyHint}</p>
-            <Link
-              href="/catalog"
-              className="mt-10 inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
-            >
-              Browse catalog
-            </Link>
+          <div className="rounded-3xl border border-dashed border-gray-300 bg-white px-8 py-14 text-center shadow-sm sm:px-14 sm:py-16">
+            <h2 className="text-xl font-semibold text-gray-900">No orders yet</h2>
+            <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-gray-600">{emptyHint}</p>
+            <div className="mt-14 flex justify-center sm:mt-16">
+              <Link
+                href="/catalog"
+                className="inline-flex rounded-xl bg-black px-8 py-3.5 text-sm font-medium text-white transition hover:bg-gray-800"
+              >
+                Browse catalog
+              </Link>
+            </div>
           </div>
         )}
 

@@ -9,13 +9,79 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [cleared, setCleared] = useState(false);
-
+  const [fulfillStatus, setFulfillStatus] = useState<"idle" | "working" | "done" | "error">("idle");
+  const [fulfillMessage, setFulfillMessage] = useState<string | null>(null);
   useEffect(() => {
     if (!cleared) {
       clearCart();
       setCleared(true);
     }
   }, [cleared]);
+
+  useEffect(() => {
+    if (!sessionId) return;
+    const token = typeof window !== "undefined" ? localStorage.getItem("auth") : null;
+    if (!token) {
+      setFulfillStatus("idle");
+      return;
+    }
+
+    let cancelled = false;
+
+    async function fulfillWithRetries() {
+      setFulfillStatus("working");
+      const delays = [0, 800, 2000, 4000];
+      for (let i = 0; i < delays.length; i++) {
+        if (cancelled) return;
+        if (delays[i] > 0) {
+          await new Promise((r) => setTimeout(r, delays[i]));
+        }
+        if (cancelled) return;
+        try {
+          const res = await fetch("/api/stripe/fulfill-session", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ session_id: sessionId }),
+          });
+          const json = (await res.json()) as { success?: boolean; message?: string };
+          if (res.ok && json.success) {
+            if (!cancelled) {
+              setFulfillStatus("done");
+              setFulfillMessage(null);
+            }
+            return;
+          }
+          if (res.status === 409 && json.message?.includes("Payment status")) {
+            continue;
+          }
+          if (!cancelled) {
+            setFulfillStatus("error");
+            setFulfillMessage(json.message ?? "Could not save your order.");
+          }
+          return;
+        } catch {
+          if (!cancelled) {
+            setFulfillStatus("error");
+            setFulfillMessage("Network error while saving your order.");
+          }
+          return;
+        }
+      }
+      if (!cancelled) {
+        setFulfillStatus("error");
+        setFulfillMessage("Payment may still be processing. Check Orders in a minute or contact support.");
+      }
+    }
+
+    void fulfillWithRetries();
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId]);
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
@@ -24,9 +90,19 @@ function SuccessContent() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">Checkout</p>
           <h1 className="mt-2 text-4xl font-bold tracking-tight">Payment successful</h1>
           <p className="mt-4 text-gray-600">
-            Thank you. Stripe confirmed your payment. Your order will show up under Orders once the
-            server finishes saving it (usually within a few seconds).
+            Thank you. Stripe confirmed your payment. We&apos;re saving your order to your account now.
           </p>
+          {fulfillStatus === "working" && (
+            <p className="mt-3 text-sm text-gray-600">Saving order…</p>
+          )}
+          {fulfillStatus === "error" && fulfillMessage && (
+            <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              {fulfillMessage}
+            </p>
+          )}
+          {fulfillStatus === "done" && (
+            <p className="mt-3 text-sm text-emerald-800">Order saved. You can view it under Orders.</p>
+          )}
           {sessionId && (
             <p className="mt-2 text-xs text-gray-500">
               Reference: <span className="font-mono">{sessionId}</span>

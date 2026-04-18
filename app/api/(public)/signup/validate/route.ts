@@ -62,9 +62,9 @@ export async function POST(req: NextRequest) {
         pendingUser.first_name,
         pendingUser.last_name,
         email,
-        pendingUser.username,
+        pendingUser.username ?? null,
         pendingUser.password,
-        pendingUser.phone,
+        pendingUser.phone ?? null,
         pendingUser.role
       ]
     );

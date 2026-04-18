@@ -3,6 +3,11 @@ import { cookies, headers } from "next/headers";
 import { ValidationError } from "./types";
 const BEARER_PREFIX = "Bearer ";
 
+/** Prefer Authorization header so fetch(..., { Authorization }) matches API identity; cookie can be stale. */
+function pickAuthToken(headerToken: string | null, cookieToken: string | null): string | null {
+  return headerToken ?? cookieToken ?? null;
+}
+
 // this validation function will ensure that the user is logged in.
 // @params 
 // requireAdmin: if set to true the user must be an administrator.
@@ -12,9 +17,9 @@ export async function requireAuth(requireAdmin:boolean) :Promise<ValidationError
         const cookieStore = await cookies();                    // cookie store
         const headerStore = await headers();                    // header store
 
-        const headerToken = extractBearerToken(headerStore.get("authorization"));     // retrieves authentication header token
-        const cookieToken = cookieStore.get("auth")?.value ?? null;                   // retrieves auth token from cookie
-        const token = cookieToken ?? headerToken;                                     // whichever is non null, use it
+        const headerToken = extractBearerToken(headerStore.get("authorization"));
+        const cookieToken = cookieStore.get("auth")?.value ?? null;
+        const token = pickAuthToken(headerToken, cookieToken);
 
         // validates token presence
         if (!token)     
@@ -81,13 +86,16 @@ export async function getAuthClaims(): Promise<{ userId: string; role: string } 
     const headerStore = await headers();
     const headerToken = extractBearerToken(headerStore.get("authorization"));
     const cookieToken = cookieStore.get("auth")?.value ?? null;
-    const token = cookieToken ?? headerToken;
+    const token = pickAuthToken(headerToken, cookieToken);
     if (!token) return null;
     const secret = process.env.JWT_SECRET;
     if (!secret) return null;
     const decoded = jwt.verify(token, secret) as { userId?: string; role?: string };
     if (!decoded.userId || !decoded.role) return null;
-    return { userId: decoded.userId, role: decoded.role };
+    return {
+      userId: String(decoded.userId).trim(),
+      role: String(decoded.role).trim(),
+    };
   } catch {
     return null;
   }

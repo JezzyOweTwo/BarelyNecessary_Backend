@@ -1,4 +1,7 @@
-export const dynamic = "force-dynamic";
+"use client";
+
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 
 type ProfileData = {
   first_name?: string;
@@ -10,40 +13,48 @@ type ProfileData = {
   is_active?: boolean;
 };
 
-async function getProfile(): Promise<ProfileData | null> {
-  try {
-    const res = await fetch(`${process.env.BACKEND_URL}/api/profile`, {
-      cache: "no-store",
-    });
+export default function ProfilePage() {
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [unauthorized, setUnauthorized] = useState(false);
 
-    if (!res.ok) return null;
+  const loadProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setUnauthorized(false);
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("auth") : null;
+      const res = await fetch("/api/profile", {
+        credentials: "include",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
 
-    const json = await res.json();
-    return json?.data ?? json ?? null;
-  } catch {
-    return null;
-  }
-}
+      if (res.status === 401 || res.status === 403) {
+        setUnauthorized(true);
+        setProfile(null);
+        return;
+      }
 
-// function getInitials(profile: ProfileData | null) {
-//   const first = profile?.first_name?.[0] ?? "";
-//   const last = profile?.last_name?.[0] ?? "";
-//   const initials = `${first}${last}`.trim();
-//   return initials || "BN";
-// }
+      const json = (await res.json()) as { data?: ProfileData; message?: string };
+      if (!res.ok) {
+        throw new Error(json.message ?? "Could not load profile.");
+      }
+      if (!json.data) {
+        throw new Error("Profile data was missing.");
+      }
+      setProfile(json.data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong.");
+      setProfile(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-export default async function ProfilePage() {
-  const profile = await getProfile();
-
-  const displayProfile: ProfileData = profile ?? {
-    first_name: "Guest",
-    last_name: "User",
-    email: "Not available",
-    username: "Not available",
-    phone: "Not available",
-    role: "Customer",
-    is_active: false,
-  };
+  useEffect(() => {
+    void loadProfile();
+  }, [loadProfile]);
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
@@ -61,189 +72,172 @@ export default async function ProfilePage() {
           </p>
         </div>
       </section>
-      {/* <div className="items-center justify-center mt-8 grid gap-6 md:grid-cols-2">
-        <div className="flex flex-wrap gap-6">
-          <a
-            href="#overview"
-            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
-          >
-            Overview
-          </a>
-          <a
-            href="#contact"
-            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
-          >
-            Contact
-          </a>
-          <a
-            href="#addresses"
-            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
-          >
-            Addresses
-          </a>
-          <a
-            href="#payments"
-            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
-          >
-            Payment Methods
-          </a>
-          <a
-            href="#orders"
-            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
-          >
-            Orders
-          </a>
-        </div>
-      </div> */}
-      <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8 space-y-10 gap-10">
-        <div className="space-y-9">
-          <div className="rounded-3xl border border-gray-200 bg-white p-8">
-            <div className="flex flex-col items-center justify-center text-center">
-                <div >
-                  <p className=" text-m text-gray-500">Hi</p>
-                  <h2 className="text-2xl font-semibold text-gray-900">
-                    {displayProfile.first_name} {displayProfile.last_name}
-                  </h2>
-                  <p className="mt-1 text-sm text-gray-600">
-                    {displayProfile.email}
-                  </p>
-                </div>
+
+      <section className="mx-auto max-w-7xl space-y-10 gap-10 px-6 py-10 lg:px-8">
+        {loading && (
+          <div className="rounded-3xl border border-gray-200 bg-white p-10 text-center text-gray-600 shadow-sm">
+            Loading your profile…
+          </div>
+        )}
+
+        {!loading && unauthorized && (
+          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">Sign in to view your account</h2>
+            <p className="mt-3 text-sm text-gray-600">
+              Your profile is loaded from your account after you log in.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/login?next=/profile"
+                className="inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/register?next=/profile"
+                className="inline-flex rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              >
+                Create account
+              </Link>
             </div>
           </div>
+        )}
 
-          <div className="space-y-8 justify-center mt-8">
-            <section
-              id="overview"
-              className="rounded-3xl border border-gray-200 bg-white p-8"
+        {!loading && !unauthorized && error && (
+          <div className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm">
+            <p className="font-medium text-red-800">{error}</p>
+            <button
+              type="button"
+              onClick={() => void loadProfile()}
+              className="mt-6 rounded-xl border border-red-300 bg-white px-5 py-2 text-sm font-medium text-red-800 transition hover:bg-red-100"
             >
-              <h3 className="text-2xl font-semibold text-gray-900">
-                Account Overview
-              </h3>
-
-              <div className="mt-5 grid gap-8 md:grid-cols-2">
-                <div>
-                  <p className="mt-2 text-xs uppercase tracking-wide text-gray-500">
-                    Full Name
-                  </p>
-                  <p className=" mt-1 text-base font-medium text-gray-900">
-                    {displayProfile.first_name} {displayProfile.last_name}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">
-                    Username
-                  </p>
-                  <p className="mt-1 text-base font-medium text-gray-900">
-                    {displayProfile.username || "-"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">
-                    Role
-                  </p>
-                  <p className="mt-1 text-base font-medium capitalize text-gray-900">
-                    {displayProfile.role || "-"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">
-                    Account Status
-                  </p>
-                  <p className="mt-1 text-base font-medium text-gray-900">
-                    {displayProfile.is_active ? "Active" : "Unavailable"}
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section
-              id="contact"
-              className="mt-6 rounded-3xl border border-gray-200 bg-white p-8"
-            >
-              <h3 className="text-2xl font-semibold text-gray-900">
-                Contact Information
-              </h3>
-
-              <div className="mt-5 grid gap-8 md:grid-cols-2">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-gray-500">
-                    Email
-                  </p>
-                  <p className="mt-2 text-base font-medium text-gray-900">
-                    {displayProfile.email || "-"}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">
-                    Phone
-                  </p>
-                  <p className="mt-1 text-base font-medium text-gray-900">
-                    {displayProfile.phone || "-"}
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section
-              id="addresses"
-              className="mt-6 rounded-3xl border border-gray-200 bg-white p-8"
-            >
-              <h3 className="text-2xl font-semibold text-gray-900">
-                Addresses
-              </h3>
-
-              <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-6 py-6">
-                <p className="text-sm font-medium text-gray-900">
-                  No saved addresses yet.
-                </p>
-                <p className="mt-2 text-sm text-gray-600">
-                  Shipping and billing addresses will appear here once connected.
-                </p>
-              </div>
-            </section>
-
-            <section
-              id="payments"
-              className="mt-6 rounded-3xl border border-gray-200 bg-white p-8"
-            >
-              <h3 className="text-2xl font-semibold text-gray-900">
-                Payment Methods
-              </h3>
-
-              <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-6 py-6">
-                <p className="text-sm font-medium text-gray-900">
-                  No saved payment methods yet.
-                </p>
-                <p className="mt-2 text-sm text-gray-600">
-                  Saved cards or other payment options will appear here once
-                  connected.
-                </p>
-              </div>
-            </section>
-
-            <section
-              id="orders"
-              className="mt-6 rounded-3xl border border-gray-200 bg-white p-8"
-            >
-              <h3 className="text-2xl font-semibold text-gray-900">
-                Recent Orders
-              </h3>
-
-              <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-6 py-6">
-                <p className="text-sm font-medium text-gray-900">
-                  No recent orders available.
-                </p>
-                <p className="mt-2 text-sm text-gray-600">
-                  Order history will show here when the orders route is connected.
-                </p>
-              </div>
-            </section>
+              Retry
+            </button>
           </div>
-        </div>
+        )}
+
+        {!loading && !unauthorized && !error && profile && (
+          <div className="space-y-9">
+            <div className="rounded-3xl border border-gray-200 bg-white p-8">
+              <div className="flex flex-col items-center justify-center text-center">
+                <div>
+                  <p className="text-m text-gray-500">Hi</p>
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    {profile.first_name} {profile.last_name}
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-600">{profile.email}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 space-y-8">
+              <section
+                id="overview"
+                className="rounded-3xl border border-gray-200 bg-white p-8"
+              >
+                <h3 className="text-2xl font-semibold text-gray-900">Account Overview</h3>
+
+                <div className="mt-5 grid gap-8 md:grid-cols-2">
+                  <div>
+                    <p className="mt-2 text-xs uppercase tracking-wide text-gray-500">Full Name</p>
+                    <p className="mt-1 text-base font-medium text-gray-900">
+                      {profile.first_name} {profile.last_name}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">Username</p>
+                    <p className="mt-1 text-base font-medium text-gray-900">
+                      {profile.username || "-"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">Role</p>
+                    <p className="mt-1 text-base font-medium capitalize text-gray-900">
+                      {profile.role || "-"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">
+                      Account Status
+                    </p>
+                    <p className="mt-1 text-base font-medium text-gray-900">
+                      {profile.is_active ? "Active" : "Unavailable"}
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section
+                id="contact"
+                className="mt-6 rounded-3xl border border-gray-200 bg-white p-8"
+              >
+                <h3 className="text-2xl font-semibold text-gray-900">Contact Information</h3>
+
+                <div className="mt-5 grid gap-8 md:grid-cols-2">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-gray-500">Email</p>
+                    <p className="mt-2 text-base font-medium text-gray-900">
+                      {profile.email || "-"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">Phone</p>
+                    <p className="mt-1 text-base font-medium text-gray-900">
+                      {profile.phone || "-"}
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section
+                id="addresses"
+                className="mt-6 rounded-3xl border border-gray-200 bg-white p-8"
+              >
+                <h3 className="text-2xl font-semibold text-gray-900">Addresses</h3>
+
+                <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-6 py-6">
+                  <p className="text-sm font-medium text-gray-900">No saved addresses yet.</p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    Shipping and billing addresses will appear here once connected.
+                  </p>
+                </div>
+              </section>
+
+              <section
+                id="payments"
+                className="mt-6 rounded-3xl border border-gray-200 bg-white p-8"
+              >
+                <h3 className="text-2xl font-semibold text-gray-900">Payment Methods</h3>
+
+                <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-6 py-6">
+                  <p className="text-sm font-medium text-gray-900">No saved payment methods yet.</p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    Saved cards or other payment options will appear here once connected.
+                  </p>
+                </div>
+              </section>
+
+              <section
+                id="orders"
+                className="mt-6 rounded-3xl border border-gray-200 bg-white p-8"
+              >
+                <h3 className="text-2xl font-semibold text-gray-900">Recent Orders</h3>
+
+                <div className="mt-6 rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-6 py-6">
+                  <p className="text-sm font-medium text-gray-900">No recent orders available.</p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    See <Link href="/orders" className="font-medium text-black underline">Your orders</Link> for
+                    order history.
+                  </p>
+                </div>
+              </section>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );
