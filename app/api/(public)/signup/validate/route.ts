@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     // retrieve pending user from redis
-    const pendingUser = await redisGetJSON<PendingUser|any>(`verify:${email}`);
+    const pendingUser = await redisGetJSON<PendingUser>(`verify:${email}`);
 
     // bro may need to reconsider his life desisions
     if (!pendingUser) {
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       }
     });
 
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
     return NextResponse.json(
       { data:  "Internal server error" },

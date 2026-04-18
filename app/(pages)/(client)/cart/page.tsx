@@ -48,14 +48,14 @@ export default function CartPage() {
       </section>
 
       <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(280px,22rem)] lg:gap-x-16 lg:gap-y-10 lg:px-8 xl:gap-x-24">
-        <div className="min-w-0">
+        <div className="mb-6 min-w-0">
           {items.length === 0 ? (
             <div className="flex flex-col items-center rounded-3xl border border-dashed border-gray-300 bg-white px-10 pb-14 pt-12 text-center shadow-sm">
-              <h2 className="text-xl font-semibold">Your cart is empty</h2>
-              <p className="mt-2 text-sm text-gray-600">Browse products and add something.</p>
+              <h1 className="mt-6 text-xl font-semibold">Your cart is empty</h1>
+              <p className="mt-4 text-sm text-gray-600">Browse products and add to cart!</p>
               <Link
                 href="/catalog"
-                className="mt-10 inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                className="mt-8 mb-6 rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
               >
                 Go to catalog
               </Link>
@@ -65,7 +65,7 @@ export default function CartPage() {
               {items.map((item) => (
                 <div
                   key={item.product_id}
-                  className="flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center"
+                  className="mb-6 flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center"
                 >
                   <div className="relative h-24 w-24 overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
                     {item.image_url ? (
@@ -144,7 +144,7 @@ export default function CartPage() {
           )}
         </div>
 
-        <aside className="h-fit w-full justify-self-end rounded-3xl border border-gray-200 bg-white p-6 shadow-sm lg:max-w-sm lg:sticky lg:top-24">
+        <aside className="h-fit w-full justify-self-end rounded-2xl border border-gray-200 bg-white p-6 shadow-sm lg:max-w-sm lg:sticky lg:top-24">
           <h2 className="text-xl font-semibold">Summary</h2>
           <div className="mt-5 space-y-5 text-sm">
             <div className="flex items-center justify-between py-0.5">

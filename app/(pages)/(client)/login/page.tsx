@@ -87,7 +87,7 @@ function LoginForm() {
           </p>
           <h1 className="mt-2 text-4xl font-bold tracking-tight">Login</h1>
           <p className="mt-4 text-gray-600">
-            Sign in to view protected pages and manage your account.
+            Sign in to view and manage your account and purchases.
           </p>
         </div>
       </section>
@@ -103,9 +103,9 @@ function LoginForm() {
             </div>
           )}
 
-          <div className="grid gap-12">
+          <div className=" p-6 gap-x-8 gap-y-6 lg:grid-cols-1">
             <div>
-              <label className="mb-3 block text-sm font-medium text-gray-700" htmlFor="email">
+              <label className="mb-3 mt-5 block text-sm font-medium text-gray-700" htmlFor="email">
                 Email or username
               </label>
               <input
@@ -122,7 +122,7 @@ function LoginForm() {
 
             <div>
               <label
-                className="mb-3 block text-sm font-medium text-gray-700"
+                className="mb-3 mt-6 block text-sm font-medium text-gray-700"
                 htmlFor="password"
               >
                 Password
@@ -142,12 +142,12 @@ function LoginForm() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mb-3 mt-6 rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? "Signing in..." : "Sign in"}
             </button>
 
-            <p className="text-sm text-gray-600">
+            <p className="mb-3 mt-6 text-sm text-gray-600">
               Don’t have an account?{" "}
               <Link href={registerHref} className="font-medium text-black underline">
                 Create one

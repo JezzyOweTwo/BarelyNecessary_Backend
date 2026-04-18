@@ -204,39 +204,40 @@ function RegisterForm() {
           )}
 
           {step === "signup" ? (
-            <form onSubmit={onSubmitSignup} className="grid gap-12">
-              <div className="grid gap-x-12 gap-y-12 md:grid-cols-2">
+           <form onSubmit={onSubmitSignup} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10">
+              <div className="grid gap-x-6 gap-y-6 lg:grid-cols-2">
                 <div>
                   <label
-                    className="mb-3 block text-sm font-medium text-gray-700"
+                    className="mb-3 mt-5 block text-sm font-medium text-gray-700"
                     htmlFor="firstName"
                   >
-                    First name <span className="text-red-700">*</span>
+                    First Name <span className="text-red-700">*</span>
                   </label>
                   <input
                     id="firstName"
                     required
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                    className=" w-auto rounded-2xl border border-gray-300 px-4 py-3.5  outline-none transition focus:border-black"
                   />
                   {attemptedSubmit && fieldErrors.firstName && (
                     <p className="mt-2 text-sm text-red-700">{fieldErrors.firstName}</p>
                   )}
                 </div>
+
                 <div>
                   <label
-                    className="mb-3 block text-sm font-medium text-gray-700"
+                    className="mb-3 mt-5 block text-sm font-medium text-gray-700"
                     htmlFor="lastName"
                   >
-                    Last name <span className="text-red-700">*</span>
+                    Last Name <span className="text-red-700">*</span>
                   </label>
                   <input
                     id="lastName"
                     required
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                    className="w-auto rounded-2xl border border-gray-300 px-4 py-3.5  outline-none transition focus:border-black"
                   />
                   {attemptedSubmit && fieldErrors.lastName && (
                     <p className="mt-2 text-sm text-red-700">{fieldErrors.lastName}</p>
@@ -245,7 +246,7 @@ function RegisterForm() {
               </div>
 
               <div>
-                <label className="mb-3 block text-sm font-medium text-gray-700" htmlFor="email">
+                <label className="mb-3 mt-6 block text-sm font-medium text-gray-700" htmlFor="email">
                   Email <span className="text-red-700">*</span>
                 </label>
                 <input
@@ -255,7 +256,7 @@ function RegisterForm() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                  className="w-full rounded-2xl border border-gray-300 px-4 py-3.5 outline-none transition focus:border-black"
                   placeholder="you@example.com"
                 />
                 {attemptedSubmit && fieldErrors.email && (
@@ -263,10 +264,10 @@ function RegisterForm() {
                 )}
               </div>
 
-              <div className="grid gap-x-12 gap-y-12 md:grid-cols-2">
+              <div className="grid gap-x-6 gap-y-6 lg:grid-cols-2">
                 <div>
                   <label
-                    className="mb-3 block text-sm font-medium text-gray-700"
+                    className="mb-3 mt-6 block text-sm font-medium text-gray-700"
                     htmlFor="username"
                   >
                     Username <span className="text-red-700">*</span>
@@ -276,24 +277,25 @@ function RegisterForm() {
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                    className="w-auto rounded-2xl border border-gray-300 px-4 py-3.5 outline-none transition focus:border-black"
                   />
                   {attemptedSubmit && fieldErrors.username && (
                     <p className="mt-2 text-sm text-red-700">{fieldErrors.username}</p>
                   )}
                 </div>
+
                 <div>
                   <label
-                    className="mb-3 block text-sm font-medium text-gray-700"
+                    className="mb-3 mt-6 block text-sm font-medium text-gray-700 "
                     htmlFor="phone"
                   >
-                    Phone number
+                    Phone Number
                   </label>
                   <input
                     id="phone"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                    className="w-auto rounded-2xl border border-gray-300 px-4 py-3.5 outline-none transition focus:border-black"
                     placeholder="(555) 555-5555"
                   />
                 </div>
@@ -301,7 +303,7 @@ function RegisterForm() {
 
               <div>
                 <label
-                  className="mb-3 block text-sm font-medium text-gray-700"
+                  className="mb-3 mt-6 block text-sm font-medium text-gray-700"
                   htmlFor="password"
                 >
                   Password <span className="text-red-700">*</span>
@@ -313,7 +315,7 @@ function RegisterForm() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                  className="w-full rounded-2xl border border-gray-300 px-4 py-3.5 outline-none transition focus:border-black"
                   placeholder="••••••••"
                 />
                 {attemptedSubmit && fieldErrors.password && (
@@ -323,10 +325,10 @@ function RegisterForm() {
 
               <div>
                 <label
-                  className="mb-3 block text-sm font-medium text-gray-700"
+                  className="mb-3 mt-6 block text-sm font-medium text-gray-700"
                   htmlFor="confirmPassword"
                 >
-                  Confirm password <span className="text-red-700">*</span>
+                  Confirm Password <span className="mb-3 mt-6 text-red-700">*</span>
                 </label>
                 <input
                   id="confirmPassword"
@@ -335,14 +337,14 @@ function RegisterForm() {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                  className="w-full rounded-2xl border border-gray-300 px-4 py-3.5 outline-none transition focus:border-black"
                   placeholder="••••••••"
                 />
                 {attemptedSubmit && fieldErrors.confirmPassword ? (
-                  <p className="mt-2 text-sm text-red-700">{fieldErrors.confirmPassword}</p>
+                  <p className="mb-3 mt-6 mt-2 text-sm text-red-700">{fieldErrors.confirmPassword}</p>
                 ) : (
                   !passwordsMatch && (
-                    <p className="mt-2 text-sm text-red-700">Passwords don’t match.</p>
+                    <p className="mb-3 mt-6 text-sm text-red-700">Passwords don’t match.</p>
                   )
                 )}
               </div>
@@ -350,7 +352,7 @@ function RegisterForm() {
               <button
                 type="submit"
                 disabled={submitting || !canSubmitSignup}
-                className="rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mb-3 mt-6 rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Creating account..." : "Create account"}
               </button>
@@ -359,7 +361,7 @@ function RegisterForm() {
                 <span className="text-red-700">*</span> means required (mandatory) field.
               </p>
 
-              <p className="text-sm text-gray-600">
+              <p className="mb-3 mt-6 text-sm text-gray-600">
                 Already have an account?{" "}
                 <Link href={loginHref} className="font-medium text-black underline">
                   Sign in
