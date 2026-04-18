@@ -87,13 +87,13 @@ export default function Home() {
             </p>
           </Link>
 
-          <Link 
+          {/* <Link 
           href="/admin" 
           className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
           >
             <h2 className="text-xl font-semibold">Admin Dashboard</h2>
             <p className="mt-2 text-sm text-gray-600">Manage products and users.</p> 
-          </Link>
+          </Link> */}
 
           {isAdmin && (
             <Link
