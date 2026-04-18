@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import { cookies, headers } from "next/headers";
+import { getProxyRequest } from "./proxy_request_context";
 import { ValidationError } from "./types";
 const BEARER_PREFIX = "Bearer ";
 
@@ -14,11 +15,20 @@ function pickAuthToken(headerToken: string | null, cookieToken: string | null): 
 //               if false, any logged in user is sufficient
 export async function requireAuth(requireAdmin:boolean) :Promise<ValidationError | null>{
     try{
-        const cookieStore = await cookies();                    // cookie store
-        const headerStore = await headers();                    // header store
+        const proxyReq = getProxyRequest();
+        let headerToken: string | null;
+        let cookieToken: string | null;
 
-        const headerToken = extractBearerToken(headerStore.get("authorization"));
-        const cookieToken = cookieStore.get("auth")?.value ?? null;
+        if (proxyReq) {
+          headerToken = extractBearerToken(proxyReq.headers.get("authorization"));
+          cookieToken = proxyReq.cookies.get("auth")?.value ?? null;
+        } else {
+          const cookieStore = await cookies();
+          const headerStore = await headers();
+          headerToken = extractBearerToken(headerStore.get("authorization"));
+          cookieToken = cookieStore.get("auth")?.value ?? null;
+        }
+
         const token = pickAuthToken(headerToken, cookieToken);
 
         // validates token presence
@@ -82,10 +92,20 @@ function extractBearerToken(authHeader: string | null | undefined): string | nul
 /** Read the verified JWT claims for the current request (cookie or Authorization header). */
 export async function getAuthClaims(): Promise<{ userId: string; role: string } | null> {
   try {
-    const cookieStore = await cookies();
-    const headerStore = await headers();
-    const headerToken = extractBearerToken(headerStore.get("authorization"));
-    const cookieToken = cookieStore.get("auth")?.value ?? null;
+    const proxyReq = getProxyRequest();
+    let headerToken: string | null;
+    let cookieToken: string | null;
+
+    if (proxyReq) {
+      headerToken = extractBearerToken(proxyReq.headers.get("authorization"));
+      cookieToken = proxyReq.cookies.get("auth")?.value ?? null;
+    } else {
+      const cookieStore = await cookies();
+      const headerStore = await headers();
+      headerToken = extractBearerToken(headerStore.get("authorization"));
+      cookieToken = cookieStore.get("auth")?.value ?? null;
+    }
+
     const token = pickAuthToken(headerToken, cookieToken);
     if (!token) return null;
     const secret = process.env.JWT_SECRET;
