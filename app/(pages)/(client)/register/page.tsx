@@ -192,11 +192,11 @@ export default function RegisterPage() {
           )}
 
           {step === "signup" ? (
-            <form onSubmit={onSubmitSignup} className="grid gap-5">
-              <div className="grid gap-5 md:grid-cols-2">
+            <form onSubmit={onSubmitSignup} className="grid gap-8">
+              <div className="grid gap-8 md:grid-cols-2">
                 <div>
                   <label
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-3 block text-sm font-medium text-gray-700"
                     htmlFor="firstName"
                   >
                     First name <span className="text-red-700">*</span>
@@ -214,7 +214,7 @@ export default function RegisterPage() {
                 </div>
                 <div>
                   <label
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-3 block text-sm font-medium text-gray-700"
                     htmlFor="lastName"
                   >
                     Last name <span className="text-red-700">*</span>
@@ -233,7 +233,7 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="email">
+                <label className="mb-3 block text-sm font-medium text-gray-700" htmlFor="email">
                   Email <span className="text-red-700">*</span>
                 </label>
                 <input
@@ -251,10 +251,10 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="grid gap-8 md:grid-cols-2">
                 <div>
                   <label
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-3 block text-sm font-medium text-gray-700"
                     htmlFor="username"
                   >
                     Username <span className="text-red-700">*</span>
@@ -272,7 +272,7 @@ export default function RegisterPage() {
                 </div>
                 <div>
                   <label
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-3 block text-sm font-medium text-gray-700"
                     htmlFor="phone"
                   >
                     Phone number
@@ -289,7 +289,7 @@ export default function RegisterPage() {
 
               <div>
                 <label
-                  className="mb-2 block text-sm font-medium text-gray-700"
+                  className="mb-3 block text-sm font-medium text-gray-700"
                   htmlFor="password"
                 >
                   Password <span className="text-red-700">*</span>
@@ -311,7 +311,7 @@ export default function RegisterPage() {
 
               <div>
                 <label
-                  className="mb-2 block text-sm font-medium text-gray-700"
+                  className="mb-3 block text-sm font-medium text-gray-700"
                   htmlFor="confirmPassword"
                 >
                   Confirm password <span className="text-red-700">*</span>
@@ -356,7 +356,7 @@ export default function RegisterPage() {
               </p>
             </form>
           ) : (
-            <form onSubmit={onSubmitVerify} className="grid gap-5">
+            <form onSubmit={onSubmitVerify} className="grid gap-8">
               <div>
                 <p className="text-sm text-gray-600">
                   Verifying for <span className="font-medium text-gray-900">{email}</span>
@@ -364,7 +364,7 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="code">
+                <label className="mb-3 block text-sm font-medium text-gray-700" htmlFor="code">
                   Verification code
                 </label>
                 <input

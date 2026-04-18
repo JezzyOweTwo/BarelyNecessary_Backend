@@ -74,6 +74,25 @@ function extractBearerToken(authHeader: string | null | undefined): string | nul
     return authHeader.slice(BEARER_PREFIX.length);
 }
 
+/** Read the verified JWT claims for the current request (cookie or Authorization header). */
+export async function getAuthClaims(): Promise<{ userId: string; role: string } | null> {
+  try {
+    const cookieStore = await cookies();
+    const headerStore = await headers();
+    const headerToken = extractBearerToken(headerStore.get("authorization"));
+    const cookieToken = cookieStore.get("auth")?.value ?? null;
+    const token = cookieToken ?? headerToken;
+    if (!token) return null;
+    const secret = process.env.JWT_SECRET;
+    if (!secret) return null;
+    const decoded = jwt.verify(token, secret) as { userId?: string; role?: string };
+    if (!decoded.userId || !decoded.role) return null;
+    return { userId: decoded.userId, role: decoded.role };
+  } catch {
+    return null;
+  }
+}
+
 function generateError(err:any): ValidationError {
     // console.log(err);
 

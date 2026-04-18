@@ -1,19 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { clearCart, getCart, type CartItem } from "@/lib/cart";
+import { useSearchParams } from "next/navigation";
+import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
+import { getCart, type CartItem } from "@/lib/cart";
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(amount);
 }
 
-export default function CheckoutPage() {
-  const router = useRouter();
+function CheckoutForm() {
+  const searchParams = useSearchParams();
+  const canceled = searchParams.get("canceled") === "1";
+
   const [items, setItems] = useState<CartItem[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [orderError, setOrderError] = useState<string | null>(null);
 
   const [fullName, setFullName] = useState("");
   const [address, setAddress] = useState("");
@@ -40,17 +42,45 @@ export default function CheckoutPage() {
 
   async function onPlaceOrder(e: FormEvent) {
     e.preventDefault();
-    setSuccess(null);
+    setOrderError(null);
     setSubmitting(true);
     try {
-      // No order/stripe endpoint exists yet in this repo, so we complete checkout client-side for now.
-      // When the backend order route is added, this is where we'd POST the cart + shipping info.
-      await new Promise((r) => setTimeout(r, 400));
+      const token = typeof window !== "undefined" ? localStorage.getItem("auth") : null;
+      const res = await fetch("/api/stripe/checkout-session", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          items: items.map((it) => ({
+            product_id: it.product_id,
+            quantity: it.quantity,
+          })),
+          shipping: {
+            street: `${fullName.trim()} — ${address.trim()}`.slice(0, 300),
+            city: city.trim(),
+            province: province.trim(),
+            postal_code: postalCode.trim(),
+            country: "Canada",
+          },
+        }),
+      });
 
-      clearCart();
-      setSuccess("Order placed (demo). Your cart has been cleared.");
-      router.refresh();
-    } finally {
+      const json = (await res.json()) as {
+        success?: boolean;
+        message?: string;
+        data?: { url?: string };
+      };
+
+      if (!res.ok || !json.success || !json.data?.url) {
+        throw new Error(json.message ?? "Could not start payment.");
+      }
+
+      window.location.assign(json.data.url);
+    } catch (err) {
+      setOrderError(err instanceof Error ? err.message : "Could not start payment.");
       setSubmitting(false);
     }
   }
@@ -92,7 +122,7 @@ export default function CheckoutPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">Checkout</p>
           <h1 className="mt-2 text-4xl font-bold tracking-tight">Checkout</h1>
           <p className="mt-4 max-w-2xl text-gray-600">
-            Enter shipping details and place your order.
+            Enter shipping details, then you’ll be redirected to Stripe to pay securely with a card.
           </p>
         </div>
       </section>
@@ -102,9 +132,15 @@ export default function CheckoutPage() {
           onSubmit={onPlaceOrder}
           className="lg:col-span-2 rounded-3xl border border-gray-200 bg-white p-8 shadow-sm"
         >
-          {success && (
-            <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-              {success}
+          {canceled && (
+            <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              Payment was canceled. You can adjust your cart and try again.
+            </div>
+          )}
+
+          {orderError && (
+            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+              {orderError}
             </div>
           )}
 
@@ -186,7 +222,7 @@ export default function CheckoutPage() {
               disabled={submitting}
               className="rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {submitting ? "Placing order..." : "Place order"}
+              {submitting ? "Redirecting to Stripe…" : "Pay with card (Stripe)"}
             </button>
             <Link
               href="/cart"
@@ -237,5 +273,17 @@ export default function CheckoutPage() {
         </aside>
       </section>
     </main>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-gray-50 p-10 text-center text-gray-600">Loading…</main>
+      }
+    >
+      <CheckoutForm />
+    </Suspense>
   );
 }

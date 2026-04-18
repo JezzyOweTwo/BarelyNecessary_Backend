@@ -100,7 +100,9 @@ export interface ValidationError{
   message: string;
   code: number;
 }
-export type Validator<ExtraArgs extends [] = []> = (...args: ExtraArgs) => Promise<ValidationError | null>;
+export type Validator<ExtraArgs extends unknown[] = []> = (
+  ...args: ExtraArgs
+) => Promise<ValidationError | null>;
 
 export interface Mail {
   to:string;

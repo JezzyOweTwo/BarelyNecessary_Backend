@@ -58,6 +58,24 @@ export async function query_db<T = unknown>(sql: string, params: SqlValue[] = []
   return rows as T[];
 }
 
+/** Run queries in a single DB transaction (commit or full rollback on error). */
+export async function withTransaction<T>(fn: (conn: PoolConnection) => Promise<T>): Promise<T> {
+  const poolInstance = await getPool();
+  const connection = await poolInstance.getConnection();
+  try {
+    await connection.beginTransaction();
+    const result = await fn(connection);
+    await connection.commit();
+    return result;
+  } catch (err) {
+    await connection.rollback();
+    throw err;
+  } finally {
+    connection.release();
+  }
+}
+
+
 /* Get all rows from a table. */
 export async function getAll<T = unknown>(table: string): Promise<T[]> {
   const poolInstance = await getPool();

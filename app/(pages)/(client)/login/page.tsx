@@ -96,9 +96,9 @@ export default function LoginPage() {
             </div>
           )}
 
-          <div className="grid gap-5">
+          <div className="grid gap-8">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="email">
+              <label className="mb-3 block text-sm font-medium text-gray-700" htmlFor="email">
                 Email
               </label>
               <input
@@ -115,7 +115,7 @@ export default function LoginPage() {
 
             <div>
               <label
-                className="mb-2 block text-sm font-medium text-gray-700"
+                className="mb-3 block text-sm font-medium text-gray-700"
                 htmlFor="password"
               >
                 Password

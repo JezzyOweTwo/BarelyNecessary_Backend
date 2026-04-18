@@ -1,8 +1,257 @@
-export default async function Order() {
-  // Simulate server-side data fetching
+"use client";
+
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+type OrderItem = {
+  order_item_id: number;
+  product_id: number | null;
+  quantity: number;
+  price_at_purchase: number;
+  line_total: number;
+  product_name: string | null;
+  product_image_url: string | null;
+};
+
+type Order = {
+  order_id: number;
+  order_status: string;
+  payment_status: string;
+  total_amount: number;
+  order_date: string;
+  items: OrderItem[];
+};
+
+function formatCurrency(amount: number) {
+  return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(amount);
+}
+
+function formatDate(iso: string) {
+  try {
+    return new Intl.DateTimeFormat("en-CA", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+}
+
+function orderStatusPill(status: string) {
+  const s = status.toLowerCase();
+  const map: Record<string, string> = {
+    pending: "bg-amber-100 text-amber-900",
+    paid: "bg-emerald-100 text-emerald-900",
+    shipped: "bg-sky-100 text-sky-900",
+    completed: "bg-emerald-100 text-emerald-900",
+    cancelled: "bg-gray-200 text-gray-800",
+    failed: "bg-red-100 text-red-800",
+  };
+  return map[s] ?? "bg-gray-100 text-gray-800";
+}
+
+function paymentStatusPill(status: string) {
+  const s = status.toLowerCase();
+  const map: Record<string, string> = {
+    pending: "bg-amber-100 text-amber-900",
+    accepted: "bg-emerald-100 text-emerald-900",
+    denied: "bg-red-100 text-red-800",
+  };
+  return map[s] ?? "bg-gray-100 text-gray-800";
+}
+
+export default function OrdersPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [unauthorized, setUnauthorized] = useState(false);
+
+  const loadOrders = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setUnauthorized(false);
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("auth") : null;
+      const res = await fetch("/api/orders", {
+        credentials: "include",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        setUnauthorized(true);
+        setOrders([]);
+        return;
+      }
+
+      const json = (await res.json()) as { success?: boolean; data?: Order[]; message?: string };
+      if (!res.ok) {
+        throw new Error(json.message ?? "Could not load orders.");
+      }
+      setOrders(Array.isArray(json.data) ? json.data : []);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong.");
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadOrders();
+  }, [loadOrders]);
+
+  const hasOrders = orders.length > 0;
+
+  const emptyHint = useMemo(
+    () => "Completed purchases from checkout will show up here.",
+    []
+  );
+
   return (
-    <main>
-      <h1>Lame aah order page to be.</h1>
+    <main className="min-h-screen bg-gray-50 text-gray-900">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">Orders</p>
+          <h1 className="mt-2 text-4xl font-bold tracking-tight">Your orders</h1>
+          <p className="mt-4 max-w-2xl text-gray-600">
+            Track order status, totals, and line items. Sign in to see orders linked to your account.
+          </p>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+        {loading && (
+          <div className="rounded-3xl border border-gray-200 bg-white p-10 text-center text-gray-600 shadow-sm">
+            Loading your orders…
+          </div>
+        )}
+
+        {!loading && unauthorized && (
+          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">Sign in to view orders</h2>
+            <p className="mt-3 text-sm text-gray-600">
+              Order history is available after you log in with an account that has placed orders.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/login?next=/orders"
+                className="inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/register"
+                className="inline-flex rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              >
+                Create account
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {!loading && !unauthorized && error && (
+          <div className="rounded-3xl border border-red-200 bg-red-50 p-8 shadow-sm">
+            <p className="font-medium text-red-800">{error}</p>
+            <p className="mt-2 text-sm text-red-700">
+              Check that the database is running and configured. You can try again in a moment.
+            </p>
+            <button
+              type="button"
+              onClick={() => void loadOrders()}
+              className="mt-6 rounded-xl border border-red-300 bg-white px-5 py-2 text-sm font-medium text-red-800 transition hover:bg-red-100"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {!loading && !unauthorized && !error && !hasOrders && (
+          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
+            <h2 className="text-xl font-semibold">No orders yet</h2>
+            <p className="mt-3 text-sm text-gray-600">{emptyHint}</p>
+            <Link
+              href="/catalog"
+              className="mt-10 inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+            >
+              Browse catalog
+            </Link>
+          </div>
+        )}
+
+        {!loading && !unauthorized && !error && hasOrders && (
+          <div className="space-y-8">
+            {orders.map((order) => (
+              <article
+                key={order.order_id}
+                className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm"
+              >
+                <div className="flex flex-col gap-4 border-b border-gray-100 bg-gray-50/80 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      Order #{order.order_id}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-600">{formatDate(order.order_date)}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${orderStatusPill(order.order_status)}`}
+                    >
+                      {order.order_status}
+                    </span>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${paymentStatusPill(order.payment_status)}`}
+                    >
+                      Payment: {order.payment_status}
+                    </span>
+                    <span className="text-base font-semibold text-gray-900">
+                      {formatCurrency(order.total_amount)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="px-6 py-6">
+                  <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+                    Items
+                  </h3>
+                  <ul className="mt-5 space-y-5 divide-y divide-gray-100">
+                    {order.items.length === 0 ? (
+                      <li className="pt-1 text-sm text-gray-600">No line items stored for this order.</li>
+                    ) : (
+                      order.items.map((item) => (
+                        <li
+                          key={item.order_item_id}
+                          className="flex flex-col gap-3 pt-5 first:pt-0 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-gray-900">
+                              {item.product_name ?? `Product #${item.product_id ?? "?"}`}
+                            </p>
+                            <p className="mt-1 text-sm text-gray-600">
+                              Qty {item.quantity} × {formatCurrency(item.price_at_purchase)}
+                            </p>
+                          </div>
+                          <p className="text-sm font-semibold text-gray-900 sm:text-right">
+                            {formatCurrency(item.line_total)}
+                          </p>
+                        </li>
+                      ))
+                    )}
+                  </ul>
+
+                  <div className="mt-8 flex flex-wrap gap-3 border-t border-gray-100 pt-6">
+                    <Link
+                      href="/catalog"
+                      className="rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                    >
+                      Continue shopping
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

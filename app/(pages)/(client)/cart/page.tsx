@@ -47,21 +47,21 @@ export default function CartPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-3 lg:px-8">
-        <div className="lg:col-span-2">
+      <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(280px,22rem)] lg:gap-x-16 lg:gap-y-10 lg:px-8 xl:gap-x-24">
+        <div className="min-w-0">
           {items.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
+            <div className="flex flex-col items-center rounded-3xl border border-dashed border-gray-300 bg-white px-10 pb-14 pt-12 text-center shadow-sm">
               <h2 className="text-xl font-semibold">Your cart is empty</h2>
               <p className="mt-2 text-sm text-gray-600">Browse products and add something.</p>
               <Link
                 href="/catalog"
-                className="mt-6 inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                className="mt-10 inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
               >
                 Go to catalog
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-8">
               {items.map((item) => (
                 <div
                   key={item.product_id}
@@ -144,22 +144,22 @@ export default function CartPage() {
           )}
         </div>
 
-        <aside className="h-fit rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <aside className="h-fit w-full justify-self-end rounded-3xl border border-gray-200 bg-white p-6 shadow-sm lg:max-w-sm lg:sticky lg:top-24">
           <h2 className="text-xl font-semibold">Summary</h2>
-          <div className="mt-5 space-y-3 text-sm">
-            <div className="flex items-center justify-between">
+          <div className="mt-5 space-y-5 text-sm">
+            <div className="flex items-center justify-between py-0.5">
               <span className="text-gray-600">Items</span>
               <span className="font-medium">{itemCount}</span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-0.5">
               <span className="text-gray-600">Subtotal</span>
               <span className="font-medium">{formatCurrency(subtotal)}</span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between py-0.5">
               <span className="text-gray-600">Estimated shipping</span>
               <span className="font-medium">{items.length ? formatCurrency(0) : formatCurrency(0)}</span>
             </div>
-            <div className="flex items-center justify-between border-t border-gray-200 pt-3">
+            <div className="flex items-center justify-between border-t border-gray-200 pt-4">
               <span className="text-gray-900">Total</span>
               <span className="text-base font-semibold">{formatCurrency(subtotal)}</span>
             </div>
