@@ -17,7 +17,7 @@ type Props = {
 export default function AddToCartButton({ product }: Props) {
   const handleClick = () => {
     addToCart({ ...product, image_url:format_product_query(product.product_id) ?? null, quantity: 1 });
-    // alert("Added to cart");
+    alert("Added to cart");
   };
 
   return (

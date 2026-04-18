@@ -1,7 +1,0 @@
-export default function Page() {
-	return (
-		<>
-			<h1>This will be a item/account purchase history page one day, I pray.</h1>
-		</>
-	);
-}
