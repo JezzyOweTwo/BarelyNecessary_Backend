@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { format_product_query } from "@/lib/image_store_handler";
 import {
   clearCart,
   getCart,
@@ -68,15 +69,16 @@ export default function CartPage() {
                   className="mb-6 flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center"
                 >
                   <div className="relative h-24 w-24 overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
-                    {item.image_url ? (
-                      <Image
-                        src={item.image_url}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                        sizes="96px"
-                      />
-                    ) : (
+                    {item.product_id ? (
+                        <Image
+                          src={format_product_query(item.product_id)}
+                          alt={item.name}
+                          fill
+                          className="object-contain object-center"
+                          sizes="96px"
+                          unoptimized
+                        />
+                      ) : (
                       <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
                         No image
                       </div>

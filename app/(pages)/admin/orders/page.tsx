@@ -185,7 +185,7 @@ export default function AdminOrdersPage() {
         )}
 
         {!loading && !unauthorized && !error && hasOrders && (
-          <div className="space-y-8">
+          <div className="mt-8 space-y-8">
             {orders.map((order) => (
               <article
                 key={order.order_id}
@@ -193,7 +193,7 @@ export default function AdminOrdersPage() {
               >
                 <div className="flex flex-col gap-4 border-b border-gray-100 bg-gray-50 px-6 py-5 lg:flex-row lg:items-start lg:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <p className=" mt-8  text-xs font-semibold uppercase tracking-wide text-gray-500">
                       Order #{order.order_id}
                     </p>
                     <h2 className="mt-2 text-xl font-semibold text-gray-900">
@@ -235,23 +235,23 @@ export default function AdminOrdersPage() {
                     </p>
                   </div>
 
-                  <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                  {/* <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
                     <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
                       Billing Address
                     </h3>
                     <p className="mt-3 text-sm text-gray-700">
                       {order.billing_address || "No billing address stored."}
                     </p>
-                  </div>
+                  </div> */}
 
-                  <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                  {/* <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
                     <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
                       Payment Method
                     </h3>
                     <p className="mt-3 text-sm text-gray-700">
                       {order.payment_summary || "No payment method stored."}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="border-t border-gray-100 px-6 py-6">
