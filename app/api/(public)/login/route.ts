@@ -7,10 +7,11 @@ import { User } from "@/lib/types";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, password } = body;
+    const identifier = String(body.email ?? "").trim();
+    const password = String(body.password ?? "");
 
     const missingFields = [];
-    if (!email) missingFields.push("email");
+    if (!identifier) missingFields.push("email");
     if (!password) missingFields.push("password");
 
     if (missingFields.length > 0) {
@@ -21,13 +22,13 @@ export async function POST(req: NextRequest) {
     }
 
     const users = await query_db(
-      `SELECT * FROM users WHERE email = ? LIMIT 1`,
-      [email]
+      `SELECT * FROM users WHERE email = ? OR username = ? LIMIT 1`,
+      [identifier, identifier]
     );
 
     if (users.length === 0) {
       return NextResponse.json(
-        { message: "Email does not exist." },
+        { message: "No account found with that email or username." },
         { status: 404 }
       );
     }

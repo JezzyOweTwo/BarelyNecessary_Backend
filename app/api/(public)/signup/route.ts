@@ -43,12 +43,21 @@ export async function POST(req: NextRequest) {
     const validate = await guardRoute(requireAuth,true);
     if (!validate) role="admin"; // guardRoute only returns a value if it FAILS, not succeeds.
 
-    // checks if the email is already in the DB
-    const emailExists:boolean = await exists("users", "email", email);
+    const emailNorm = String(email).trim();
+    const usernameNorm = String(username).trim();
 
+    const emailExists = await exists("users", "email", emailNorm);
     if (emailExists) {
       return NextResponse.json(
-        { message: "Email already exists." },
+        { message: "An account with this email already exists. Try logging in or use a different email." },
+        { status: 409 }
+      );
+    }
+
+    const usernameExists = await exists("users", "username", usernameNorm);
+    if (usernameExists) {
+      return NextResponse.json(
+        { message: "This username is already taken. Please choose another one." },
         { status: 409 }
       );
     }
@@ -60,8 +69,8 @@ export async function POST(req: NextRequest) {
         user_id: userID,
         first_name: first_name,
         last_name: last_name,
-        email: email,
-        username: username,
+        email: emailNorm,
+        username: usernameNorm,
         password: hashedPassword,
         phone: typeof phone_number === "string" && phone_number.trim().length > 0 ? phone_number : undefined,
         role: role,

@@ -29,7 +29,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const next = useMemo(() => searchParams.get("next") ?? "/catalog", [searchParams]);
 
-  const [email, setEmail] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +49,7 @@ function LoginForm() {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: emailOrUsername.trim(), password }),
       });
 
       const json = (await res.json()) as LoginResponse;
@@ -106,17 +106,17 @@ function LoginForm() {
           <div className="grid gap-12">
             <div>
               <label className="mb-3 block text-sm font-medium text-gray-700" htmlFor="email">
-                Email
+                Email or username
               </label>
               <input
                 id="email"
-                type="email"
-                autoComplete="email"
+                type="text"
+                autoComplete="username"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={emailOrUsername}
+                onChange={(e) => setEmailOrUsername(e.target.value)}
                 className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
-                placeholder="you@example.com"
+                placeholder="you@example.com or your_username"
               />
             </div>
 
