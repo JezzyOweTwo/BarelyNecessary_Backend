@@ -11,6 +11,18 @@ function notifyCartUpdated() {
   window.dispatchEvent(new Event("cart:updated"));
 }
 
+function notifyItemAdded(name: string, quantity: number) {
+  if (typeof document === "undefined") return;
+  const label =
+    typeof name === "string" && name.trim() ? name.trim() : "Item";
+  document.dispatchEvent(
+    new CustomEvent("cart:itemAdded", {
+      bubbles: true,
+      detail: { name: label, quantity },
+    })
+  );
+}
+
 export function getCart(): CartItem[] {
   if (typeof window === "undefined") return [];
 
@@ -30,13 +42,20 @@ export function addToCart(product: CartItem) {
     (item) => item.product_id === product.product_id
   );
 
+  let lineQuantity: number;
   if (existing) {
     existing.quantity += 1;
+    lineQuantity = existing.quantity;
   } else {
     cart.push({ ...product, quantity: 1 });
+    lineQuantity = 1;
   }
 
   saveCart(cart);
+  notifyItemAdded(
+    typeof product.name === "string" ? product.name : "",
+    lineQuantity
+  );
 }
 
 export function setCartItemQuantity(product_id: number, quantity: number) {
