@@ -11,12 +11,6 @@ INSERT INTO categories (category_id, category_name, description) VALUES
 (3, 'Laptop Accessories', 'High-quality tech essentials designed to improve focus, comfort, and performance. From mechanical keyboards to precision accessories, each product is built for reliability and a satisfying user experience. These tools support long work sessions, creative tasks, and everything in between. Over time, the small details start to make a big difference in how you work. Or at least, they make it feel like you''re working better.'),
 (4, 'IT Geek Hacker Zone', 'A specialized collection of tools for learning, experimentation, and hands-on exploration in tech. Designed for enthusiasts, students, and builders, these products support deeper understanding of systems, networks, and hardware. Whether you''re testing ideas or building projects, they offer powerful capabilities in compact forms. Along the way, you may find yourself exploring more than you initially planned. Because curiosity tends to grow the moment you realize how much there is to uncover.');
 
-
-INSERT INTO users (user_id,first_name,last_name,email,username,password,phone,role,is_active)
-VALUES
-('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44','Nadeen','H','nadeen@example.com','nadeenrh','nadeenPass','6470000000','admin',TRUE),
-('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91','Test','User','testuser@example.com','testuser1','testPass','6471111111','customer',TRUE);
-
 -- SELECT * FROM categories;
 -- SELECT * FROM products;
 -- SELECT * FROM users;
