@@ -2,19 +2,68 @@ services:
   app:
     ports:
       - "${APP_PORT}:${APP_PORT}"
+    environment:
+      - APP_PORT=${APP_PORT}
     build:
+      context: .
       dockerfile: Dockerfile.prod
-    env_file: 
+      secrets:
+        - DB_USER
+        - DB_PASSWORD
+        - DB_NAME
+        - JWT_SECRET
+        - GMAIL_EMAIL
+        - SENDGRIND_API_KEY
+        - STRIPE_SECRET_KEY
+        - STRIPE_WEBHOOK_SECRET
+        - REDIS_USER
+        - REDIS_PASSWORD
+        - AWS_ACCESS_KEY_ID
+        - AWS_SECRET_ACCESS_KEY
+    env_file:
       - .env.production
     secrets:
       - DB_USER
       - DB_PASSWORD
       - DB_NAME
+      - JWT_SECRET
+      - GMAIL_EMAIL
+      - SENDGRIND_API_KEY
+      - STRIPE_SECRET_KEY
+      - STRIPE_WEBHOOK_SECRET
+      - REDIS_USER
+      - REDIS_PASSWORD
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+    networks:
+      - app-network
 
 secrets:
   DB_USER:
-    file: ./secrets/db_username.txt
+    file: secrets/DB_USER.txt
   DB_PASSWORD:
-    file: ./secrets/db_password.txt
+    file: secrets/DB_PASSWORD.txt
   DB_NAME:
-    file: ./secrets/db_name.txt
+    file: secrets/DB_NAME.txt
+  JWT_SECRET:
+    file: secrets/JWT_SECRET.txt
+  GMAIL_EMAIL:
+    file: secrets/GMAIL_EMAIL.txt
+  SENDGRIND_API_KEY:
+    file: secrets/SENDGRIND_API_KEY.txt
+  STRIPE_SECRET_KEY:
+    file: secrets/STRIPE_SECRET_KEY.txt
+  STRIPE_WEBHOOK_SECRET:
+    file: secrets/STRIPE_WEBHOOK_SECRET.txt
+  REDIS_USER:
+    file: secrets/REDIS_USER.txt
+  REDIS_PASSWORD:
+    file: secrets/REDIS_PASSWORD.txt
+  AWS_ACCESS_KEY_ID:
+    file: secrets/AWS_ACCESS_KEY_ID.txt
+  AWS_SECRET_ACCESS_KEY:
+    file: secrets/AWS_SECRET_ACCESS_KEY.txt
+
+networks:
+  app-network:
+    driver: bridge

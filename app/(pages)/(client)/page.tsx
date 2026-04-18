@@ -4,9 +4,9 @@ import ProductCard from "@/components/ProductCard";
 import { Category, Product } from "@/lib/types";
 
 export default async function HomePage() {
-   const products:Product[] = await api_get<Product[]>("/api/product");
-    const categories:Category[] = await api_get<Category[]>("/api/category");
-      const featuredProducts = products.filter((products) => products.is_featured).slice(0, 3);
+  const products:Product[] = await api_get<Product[]>("/api/product");
+  const categories:Category[] = await api_get<Category[]>("/api/category");
+  const featuredProducts = products.filter((products) => products.is_featured).slice(0, 3);
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">

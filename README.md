@@ -85,7 +85,7 @@ docker compose --env-file .env.development -f docker-compose-dev.yml down -v
 In prod, most of the containers are external AWS services, so we only need to build 'app':
 
 ```bash
-docker compose --env-file .env.production -f docker-compose-prod.yml up
+docker compose --env-file .env.production -f docker-compose-prod.yml up --build
 ```
 
 ```bash
