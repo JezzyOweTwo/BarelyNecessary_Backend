@@ -130,7 +130,8 @@ export default async function ProductDetailsPage({ params }: PageProps) {
                 product={{product_id: product.product_id,
                 name: product.name,
                 price: product.price,
-                image_url: product_image_url ?? undefined,}}/>
+                image_url: product_image_url ?? undefined,
+                stock_quantity: product.stock_quantity,}}/>
 
               <Link
                 href="/catalog"

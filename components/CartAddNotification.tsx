@@ -7,8 +7,13 @@ export type CartItemAddedDetail = {
   quantity: number;
 };
 
+type OutOfStockDetail = {
+  name?: string;
+};
+
 export default function CartAddNotification() {
   const [payload, setPayload] = useState<CartItemAddedDetail | null>(null);
+  const [outOfStockName, setOutOfStockName] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
   const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,6 +39,7 @@ export default function CartAddNotification() {
 
       clearTimers();
       setVisible(false);
+      setOutOfStockName(null);
       setPayload({ name, quantity: Math.floor(qty) });
 
       showTimer.current = window.setTimeout(() => setVisible(true), 0);
@@ -44,14 +50,36 @@ export default function CartAddNotification() {
       }, 4000);
     };
 
+    const onOutOfStock = (e: Event) => {
+      const ce = e as CustomEvent<OutOfStockDetail>;
+      const name =
+        typeof ce.detail?.name === "string" && ce.detail.name.trim()
+          ? ce.detail.name.trim()
+          : "Item";
+
+      clearTimers();
+      setVisible(false);
+      setPayload(null);
+      setOutOfStockName(name);
+
+      showTimer.current = window.setTimeout(() => setVisible(true), 0);
+
+      hideTimer.current = setTimeout(() => setVisible(false), 2600);
+      removeTimer.current = setTimeout(() => {
+        setOutOfStockName(null);
+      }, 3000);
+    };
+
     document.addEventListener("cart:itemAdded", onAdded);
+    document.addEventListener("cart:outOfStock", onOutOfStock);
     return () => {
       document.removeEventListener("cart:itemAdded", onAdded);
+      document.removeEventListener("cart:outOfStock", onOutOfStock);
       clearTimers();
     };
   }, []);
 
-  if (!payload) return null;
+  if (!payload && !outOfStockName) return null;
 
   return (
     <div
@@ -72,14 +100,26 @@ export default function CartAddNotification() {
         transition: "opacity 220ms ease-out, transform 220ms ease-out",
       }}
     >
-      <p className="font-semibold text-gray-900">Added to cart</p>
-      <p className="mt-1 text-gray-600">
-        <span className="font-medium text-gray-900">{payload.name}</span>
-        {" · "}
-        {payload.quantity === 1
-          ? "Qty 1 in your cart"
-          : `Qty ${payload.quantity} in your cart`}
-      </p>
+      {payload ? (
+        <>
+          <p className="font-semibold text-gray-900">Added to cart</p>
+          <p className="mt-1 text-gray-600">
+            <span className="font-medium text-gray-900">{payload.name}</span>
+            {" · "}
+            {payload.quantity === 1
+              ? "Qty 1 in your cart"
+              : `Qty ${payload.quantity} in your cart`}
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="font-semibold text-gray-900">Out of stock</p>
+          <p className="mt-1 text-gray-600">
+            <span className="font-medium text-gray-900">{outOfStockName}</span>{" "}
+            item is currently out of stock
+          </p>
+        </>
+      )}
     </div>
   );
 }

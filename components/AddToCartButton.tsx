@@ -9,6 +9,7 @@ type Props = {
     name: string;
     price: number;
     image_url: string | undefined;
+    stock_quantity: number;
   };
   disabled?:boolean;
   className?: string;
@@ -16,6 +17,17 @@ type Props = {
 
 export default function AddToCartButton({ product }: Props) {
   const handleClick = () => {
+    if (product.stock_quantity <= 0) {
+      if (typeof document !== "undefined") {
+        document.dispatchEvent(
+          new CustomEvent("cart:outOfStock", {
+            bubbles: true,
+            detail: { name: product.name },
+          })
+        );
+      }
+      return;
+    }
     addToCart({
       ...product,
       image_url: format_product_query(product.product_id) ?? null,
@@ -26,9 +38,10 @@ export default function AddToCartButton({ product }: Props) {
   return (
     <button
       onClick={handleClick}
-      className="rounded-xl bg-black px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
+      disabled={product.stock_quantity <= 0}
+      className="rounded-xl bg-black px-6 py-3 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600 disabled:hover:bg-gray-300"
     >
-      Add to Cart
+      {product.stock_quantity <= 0 ? "Out of stock" : "Add to Cart"}
     </button>
   );
 }

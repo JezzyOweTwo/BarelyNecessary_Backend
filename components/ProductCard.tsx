@@ -88,7 +88,8 @@ export default function ProductCard({ product }: ProductCardProps) {
               product={{product_id: product.product_id,
               name: product.name,
               price: product.price,
-              image_url: format_product_query(product.product_id),}}/>
+              image_url: format_product_query(product.product_id),
+              stock_quantity: product.stock_quantity,}}/>
   
           </div>
         </div>
