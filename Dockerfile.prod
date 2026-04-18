@@ -15,7 +15,7 @@ COPY entrypoint.sh /entrypoint.sh
 # Fix Windows line endings (CRLF -> LF) so the script runs in Linux container
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
-#mounts the secrets just at build time. Our app needs these envs to function, lmfao. 
+#mounts the secrets just at build time. Our app needs these envs to function
 
 RUN --mount=type=secret,id=DB_PASSWORD,env=DB_PASSWORD \
     --mount=type=secret,id=DB_USER,env=DB_USER \

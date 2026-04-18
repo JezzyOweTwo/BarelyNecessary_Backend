@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   } catch (err){
     console.error(err);
     return NextResponse.json(
-      { message: "Some bullshit has occured." },
+      { message: "Some error has occured." },
       { status: 500 }
     );
   }
