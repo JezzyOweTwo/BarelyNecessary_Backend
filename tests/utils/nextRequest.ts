@@ -13,6 +13,7 @@ export function makeNextRequest(
   init?: Omit<RequestInit, "body"> & { body?: JsonValue }
 ) {
   const headers = new Headers(init?.headers);
+
   if (init?.body !== undefined && !headers.has("content-type")) {
     headers.set("content-type", "application/json");
   }
@@ -22,8 +23,8 @@ export function makeNextRequest(
 
   return new NextRequest(url, {
     ...init,
+    signal: init?.signal ?? undefined,
     headers,
     body,
   });
 }
-
