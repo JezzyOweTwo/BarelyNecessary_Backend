@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ data: safeUsers });
 }
 
-// deletes all users, lmfao
+// deletes all users
 export async function DELETE(req: NextRequest) {
   // ensures the user is authenticated before proceeding.
   const validation = await guardRoute(requireAuth,true);

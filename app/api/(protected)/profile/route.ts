@@ -16,6 +16,7 @@ type UserRow = {
 };
 
 export async function GET() {
+  
   const validation = await guardRoute(requireAuth, false);
   if (validation) return validation;
 
@@ -23,7 +24,7 @@ export async function GET() {
   if (!claims) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-
+  
   try {
     const rows = await query_db<UserRow>(
       `SELECT first_name, last_name, email, username, phone, role, is_active
