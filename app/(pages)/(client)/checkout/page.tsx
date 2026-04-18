@@ -112,7 +112,9 @@ function CheckoutForm() {
       };
 
       if (!res.ok || !json.success || !json.data?.url) {
-        throw new Error(json.message ?? "Could not start payment.");
+        const fallback =
+          typeof (json as { data?: unknown }).data === "string" ? (json as { data?: string }).data : null;
+        throw new Error(json.message ?? fallback ?? "Could not start payment.");
       }
 
       window.location.assign(json.data.url);

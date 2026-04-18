@@ -47,7 +47,7 @@ function SuccessContent() {
             },
             body: JSON.stringify({ session_id: sessionId }),
           });
-          const json = (await res.json()) as { success?: boolean; message?: string };
+          const json = (await res.json()) as { success?: boolean; message?: string; data?: unknown };
           if (res.ok && json.success) {
             if (!cancelled) {
               setFulfillStatus("done");
@@ -60,7 +60,8 @@ function SuccessContent() {
           }
           if (!cancelled) {
             setFulfillStatus("error");
-            setFulfillMessage(json.message ?? "Could not save your order.");
+            const fallback = typeof json.data === "string" ? json.data : null;
+            setFulfillMessage(json.message ?? fallback ?? "Could not save your order.");
           }
           return;
         } catch {

@@ -16,7 +16,8 @@ export async function guardRoute<ExtraArgs extends unknown[] = []>(
       // if validation failed, we return an error JSON + status code.
       if (response) {
         return NextResponse.json(
-          { data: response.message },
+          // Keep legacy `data` while standardizing on { success, message } everywhere.
+          { success: false, message: response.message, data: response.message },
           { status: response.code }
         );
       }
@@ -24,9 +25,13 @@ export async function guardRoute<ExtraArgs extends unknown[] = []>(
     }
 
     // if the validator throws an uncaught error, we catch it here and return a generic 500 error response.
-    catch(err) {
+    catch {
       return NextResponse.json(
-        { data: "An unknown validation error occurred." },
+        {
+          success: false,
+          message: "An unknown validation error occurred.",
+          data: "An unknown validation error occurred.",
+        },
         { status: 500 }
       );
     }

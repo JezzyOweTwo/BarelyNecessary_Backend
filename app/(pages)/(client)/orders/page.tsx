@@ -87,7 +87,9 @@ export default function OrdersPage() {
 
       const json = (await res.json()) as { success?: boolean; data?: Order[]; message?: string };
       if (!res.ok) {
-        throw new Error(json.message ?? "Could not load orders.");
+        const fallback =
+          typeof (json as { data?: unknown }).data === "string" ? (json as { data?: string }).data : null;
+        throw new Error(json.message ?? fallback ?? "Could not load orders.");
       }
       setOrders(Array.isArray(json.data) ? json.data : []);
     } catch (e) {
@@ -176,7 +178,7 @@ export default function OrdersPage() {
         )}
 
         {!loading && !unauthorized && !error && !hasOrders && (
-          <div className="rounded-3xl border border-dashed border-gray-300 bg-white px-8 py-14 text-center shadow-sm sm:px-14 sm:py-16">
+          <div className="mt-5 mb-5 rounded-3xl border border-dashed border-gray-300 bg-white px-8 py-14 text-center shadow-sm sm:px-14 sm:py-16">
             <h2 className="text-xl font-semibold text-gray-900">No orders yet</h2>
             <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-gray-600">{emptyHint}</p>
             <div className="mt-14 flex justify-center sm:mt-16">
@@ -191,27 +193,27 @@ export default function OrdersPage() {
         )}
 
         {!loading && !unauthorized && !error && hasOrders && (
-          <div className="space-y-8">
+          <div className="mt-5 mb-5 space-y-8">
             {orders.map((order) => (
               <article
                 key={order.order_id}
-                className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm"
+                className="mt-5 mb-5 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm"
               >
-                <div className="flex flex-col gap-4 border-b border-gray-100 bg-gray-50/80 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="mt-5 mb-5 flex flex-col gap-4 border-b border-gray-100 bg-gray-50/80 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <p className="mt-5 mb-5 text-xs font-semibold uppercase tracking-wide text-gray-500">
                       Order #{order.order_id}
                     </p>
                     <p className="mt-1 text-sm text-gray-600">{formatDate(order.order_date)}</p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${orderStatusPill(order.order_status)}`}
+                      className={`mt-5 mb-5 rounded-full px-3 py-1 text-xs font-semibold capitalize ${orderStatusPill(order.order_status)}`}
                     >
                       {order.order_status}
                     </span>
                     <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${paymentStatusPill(order.payment_status)}`}
+                      className={`mt-5 mb-5 rounded-full px-3 py-1 text-xs font-semibold capitalize ${paymentStatusPill(order.payment_status)}`}
                     >
                       Payment: {order.payment_status}
                     </span>

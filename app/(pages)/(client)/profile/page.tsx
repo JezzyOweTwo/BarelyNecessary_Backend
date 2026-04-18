@@ -38,7 +38,9 @@ export default function ProfilePage() {
 
       const json = (await res.json()) as { data?: ProfileData; message?: string };
       if (!res.ok) {
-        throw new Error(json.message ?? "Could not load profile.");
+        const fallback =
+          typeof (json as { data?: unknown }).data === "string" ? (json as { data?: string }).data : null;
+        throw new Error(json.message ?? fallback ?? "Could not load profile.");
       }
       if (!json.data) {
         throw new Error("Profile data was missing.");

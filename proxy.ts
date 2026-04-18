@@ -6,11 +6,15 @@ import { runWithProxyRequest } from "@/lib/proxy_request_context";
 
 /**
  * Next.js 16+ network boundary (replaces deprecated middleware.ts).
- * Protects all /admin front-end routes: must be logged in as admin.
+ * Protects:
+ * - /admin/*: must be logged in as admin
+ * - /checkout/*: must be logged in
  */
 export async function proxy(request: NextRequest) {
   return runWithProxyRequest(request, async () => {
-    const validation = await guardRoute(requireAuth, true);
+    const pathname = request.nextUrl.pathname;
+    const requireAdmin = pathname.startsWith("/admin");
+    const validation = await guardRoute(requireAuth, requireAdmin);
     if (validation) {
       const login = new URL("/login", request.url);
       login.searchParams.set("next", request.nextUrl.pathname + request.nextUrl.search);
@@ -21,5 +25,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/checkout", "/checkout/:path*"],
 };
