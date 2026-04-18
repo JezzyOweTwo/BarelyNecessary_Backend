@@ -56,9 +56,9 @@ export default function ThemeToggle() {
 
   return (
     <div className="flex items-center gap-2">
-      <label className="sr-only" htmlFor="theme">
-        Theme
-      </label>
+      {/* <label className="sr-only text-sm text-gray-600" htmlFor="theme">
+        Theme:
+      </label> */}
       <select
         id="theme"
         value={mode}

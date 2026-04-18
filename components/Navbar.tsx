@@ -11,7 +11,7 @@ const navLinks = [
   { href: "/catalog", label: "Catalog" },
   { href: "/orders", label: "Orders" },
   { href: "/profile", label: "Profile" },
-  { href: "/admin", label: "Admin" },
+  // { href: "/admin", label: "Admin" },
 ];
 
 function getAuthToken(): string | null {
@@ -82,17 +82,17 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle />
+          
 
           <Link
             href="/cart"
-            className="flex items-center gap-3 rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+            className="flex items-center gap-2 rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
           >
             <span>Cart</span>
             {cartCount > 0 ? (
-              <span className="rounded-full bg-black px-2 py-1 text-center text-xs font-medium text-white">
-                {cartCount}
-              </span>
+              
+                ''+ cartCount +''
+              
             ) : null}
           </Link>
 
@@ -119,10 +119,12 @@ export default function Navbar() {
               >
                 Register
               </Link>
+              <ThemeToggle />
             </>
+            
           )}
 
-          <button
+          {/* <button
             type="button"
             className="rounded-xl border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 md:hidden"
             onClick={() => setMobileOpen((v) => !v)}
@@ -130,7 +132,7 @@ export default function Navbar() {
             aria-controls="mobile-nav"
           >
             Menu
-          </button>
+          </button> */}
         </div>
       </div>
 

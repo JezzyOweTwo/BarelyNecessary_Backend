@@ -73,7 +73,7 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl space-y-10 gap-10 px-6 py-10 lg:px-8">
+      <section className=" mx-auto max-w-7xl space-y-10 gap-10 px-6 py-10 lg:px-8">
         {loading && (
           <div className="rounded-3xl border border-gray-200 bg-white p-10 text-center text-gray-600 shadow-sm">
             Loading your profile…
@@ -81,23 +81,23 @@ export default function ProfilePage() {
         )}
 
         {!loading && unauthorized && (
-          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
-            <h2 className="text-xl font-semibold">Sign in to view your account</h2>
-            <p className="mt-3 text-sm text-gray-600">
+          <div className=" rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
+            <h1 className=" mt-6 text-2xl font-semibold ">Sign in to view your account!</h1>
+            {/* <p className="mt-4 text-sm text-gray-600">
               Your profile is loaded from your account after you log in.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            </p> */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/login?next=/profile"
-                className="inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                className="mb-8 inline-flex rounded-xl bg-black px-6 py-3 text-m font-medium text-white transition hover:bg-gray-800"
               >
                 Log in
               </Link>
               <Link
                 href="/register?next=/profile"
-                className="inline-flex rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                className="mb-8 inline-flex rounded-xl border border-gray-300 bg-white px-6 py-3 text-m font-medium text-gray-700 transition hover:bg-gray-50"
               >
-                Create account
+                Register
               </Link>
             </div>
           </div>

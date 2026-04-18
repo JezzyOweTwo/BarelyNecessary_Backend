@@ -122,9 +122,9 @@ export default function OrdersPage() {
       <section className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">Orders</p>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight">Your orders</h1>
+          <h1 className="mt-2 text-4xl font-bold tracking-tight">My Orders</h1>
           <p className="mt-4 max-w-2xl text-gray-600">
-            Track order status, totals, and line items. Sign in to see orders linked to your account.
+            Track order status, totals, and line items.
           </p>
         </div>
       </section>
@@ -137,23 +137,23 @@ export default function OrdersPage() {
         )}
 
         {!loading && unauthorized && (
-          <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
-            <h2 className="text-xl font-semibold">Sign in to view orders</h2>
-            <p className="mt-3 text-sm text-gray-600">
+          <div className="mt-10 rounded-3xl border border-dashed border-gray-300 bg-white p-10 text-center shadow-sm">
+            <h1 className="mt-6 text-2xl font-semibold">Sign in to view your orders!</h1>
+            {/* <p className="mt-3 text-sm text-gray-600">
               Order history is available after you log in with an account that has placed orders.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            </p> */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/login?next=/orders"
-                className="inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+                className="mb-8 inline-flex rounded-xl bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
               >
                 Log in
               </Link>
               <Link
                 href="/register"
-                className="inline-flex rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                className="mb-8 inline-flex rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
               >
-                Create account
+                Register
               </Link>
             </div>
           </div>
