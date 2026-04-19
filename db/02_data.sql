@@ -97,14 +97,14 @@ VALUES
 INSERT INTO payment_methods
 (user_id, cardholder_name, card_last4, card_brand, expiry_month, expiry_year, is_default)
 VALUES
-(d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91, 'Test User', '4242', 'Visa', 12, 2028, TRUE),
+('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91', 'Test User', '4242', 'Visa', 12, 2028, TRUE),
 ('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44', 'Nadeen H', '1881', 'Mastercard', 9, 2029, TRUE);
 
 INSERT INTO orders
 (user_id, shipping_address_id, billing_address_id, payment_id, order_status, payment_status, total_amount)
 VALUES
-(d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91, 1, 2, 1, 'paid', 'accepted', 214.98),
-(d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91, 1, 2, 1, 'shipped', 'accepted', 59.98),
+('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91', 1, 2, 1, 'paid', 'accepted', 214.98),
+('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91', 1, 2, 1, 'shipped', 'accepted', 59.98),
 ('9f3c2a7e-6b4d-4f91-8c2a-5e7b1d9a3c44', 3, 4, 2, 'completed', 'accepted', 129.99);
 
 INSERT INTO order_items
@@ -144,9 +144,33 @@ INSERT INTO orders
 VALUES
 ('d2a8e1b5-3c6f-47ad-b9e2-0f4c8a7d6e91', 1, 2, 1, 'paid', 'accepted', 214.98);
 
+INSERT INTO users (
+  user_id,
+  first_name,
+  last_name,
+  email,
+  username,
+  password,
+  role,
+  is_active
+)
+VALUES (
+  '11111111-1111-4111-8111-111111111111',
+  'Main',
+  'Admin',
+  'admin@barelynecessary.local',
+  'mainadmin',
+  '$2b$10$dgNS5DEG9lQUVWWvH0hWveNPJ2jf3hJGVta7oBlEdO0BYbXPbJHQ6',
+  'admin',
+  1
+);
+
+
 SELECT * FROM orders;
 
 SELECT user_id, first_name, last_name, email, username
 FROM users
 ORDER BY user_id;
+
+
 
